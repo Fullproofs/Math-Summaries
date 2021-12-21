@@ -1,0 +1,1786 @@
+\documentclass[10pt]{article}
+
+\usepackage[margin=2cm]{geometry}
+\usepackage{fullproof}
+
+\begin{document}
+
+\section{Eigenvectors and Eigenvalues}
+
+We begin linear algebra two by asking a very fundamental question: when do matrices (equivalently, linear transformations) act like scalars? As in, when does multiplying a vector by a matrix result in a scaled vector. Formally, how can we find a vector $v\in V$ such that there exists a $\lambda\in\bF$ such that:
+\[ Av = \lambda v \]
+
+\begin{definition}
+
+An \defcolor{eigenvector} of a linear transformation $T:V\to V$ (equivalently, a square matrix) is a non-zero vector $v\in V$ such that there exists $\lambda\in\bF$ where:
+\[ Tv = \lambda v \]
+$\lambda$ is called a \defcolor{eigenvalue} of $T$.
+
+\end{definition}
+
+\begin{definition}
+
+Given an eigenvalue $\lambda$ of $T$, we define the \defcolor{eigenspace} of $\lambda$ to be:
+\[ V_\lambda \coloneqq \set{ v\in V ~\middle|~ Tv=\lambda v} \]
+
+\end{definition}
+
+\begin{definition}
+
+The \defcolor{spectrum}, denoted $\spec$, of a linear transformation is the set of all of its eigenvalues. Formally:
+\[ \spec(T) = \set{\lambda\in\bF \middle| \exists 0\neq v\in V: Tv=\lambda v} \]
+
+\end{definition}
+
+\begin{theorem}{Every eigenspace is a subspace of $V$}
+
+Let $\lambda$ be the eigenvalue.
+
+There are two criteria for a subspace:
+\begin{itemize}
+    \item $0\in V_\lambda$: Since $T(0)=0=\lambda\cdot0\implies 0\in V_\lambda$.
+    \item Given $v,u\in V_\lambda$ and $\alpha\in\bF$, $v+\alpha u\in V_\lambda$: we know $v+\alpha u\in V_\lambda \iff T(v+\alpha u)=\lambda(v+\alpha u)$. And we know $T(v+\alpha u) = Tv + \alpha Tu = \lambda v + \alpha\lambda u = \lambda(v+\alpha u)$.
+\end{itemize}
+
+$\qed$
+
+\end{theorem}
+
+Notice that if $\lambda$ isn't an eigenvalue of $T$, then $V_\lambda = \set{0}$.
+
+\begin{theorem}{Given a matrix $A$, $\lambda$ is an eigenvalue of $A$ if and only if $\det(\lambda I - A) = 0$}
+
+We know $\lambda$ is an eigenvalue of $A$ if and only if there exists a $v\in V$ such that: $Av=\lambda v = \lambda Iv \iff (\lambda I - A)v = 0$ this is if and only if the nullspace of $\lambda I - A$ is non-zero, which is if and only if $\lambda I - A$ is singular (not invertible) which is if and only if $\det(\lambda I - A) = 0 ~~ \qed$
+
+\end{theorem}
+
+\begin{definition}
+
+We denote the \defcolor{characteristic polynomial} of a matrix $A$ as $p_A(x)$ and define it to be: $p_A(x) \coloneqq \det(x I - A)$.
+
+\end{definition}
+
+\begin{theorem}{$\lambda$ is an eigenvalue of $A$ if and only if $\lambda$ is a root of $p_A(x)$}
+
+$\lambda$ is a root of $p_A(x) \iff p_A(\lambda) = 0 \iff \det(\lambda I - A) = 0 \iff \lambda$ is an eigenvalue of $A ~~\qed$
+
+\end{theorem}
+
+Notice that \textit{by definition} $V_\lambda = \nspace(\lambda I - A)$. This is trivial, so I won't waste the energy or space proving it.
+
+\separate
+
+Let's try an example:
+
+Given the real matrix $A=\begin{pmatrix} 1 & -1 \\ 2 & 4 \end{pmatrix}$ find all eigenvalues and eigenvectors.
+
+First, let's find $A$'s characteristic polynomial:
+\[ p_A(x) = \det\begin{pmatrix} x-1 & 1 \\ -2 & x-4 \end{pmatrix} = (x-1)(x-4) + 2 = x^2 - 5x + 6 = (x-3)(x-2) \]
+
+So $A$ has two eigenvalues: $2$ and $3$. So we need to find the respective nullspaces.
+
+For $\nspace(2I-A)$:
+\[ \begin{pmatrix} 1 & 1 \\ -2 & -2 \end{pmatrix} \overbrace{\longmapsto}^{-\frac{1}{2}R_2} \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix} \overbrace{\longmapsto}^{R_2\mapsto R_2-R_1} \begin{pmatrix} 1 & 1 \\ 0 & 0 \end{pmatrix} \]
+
+So $V_2 = \lspan\set{\begin{pmatrix} 1 \\ -1\end{pmatrix}}$
+
+Similarly for $3$, we get:
+\[ \begin{pmatrix} 2 & 1 \\ -2 & -1\end{pmatrix} \longmapsto \begin{pmatrix} 2 & 1 \\ 0 & 0 \end{pmatrix} \]
+
+So $V_3 = \lspan\begin{pmatrix} 1 \\ -2 \end{pmatrix}$
+
+And we see that in fact, these are eigenvectors (check for yourself!)
+
+\medskip
+
+\noindent\textcolor{red}{Note:} an invertible matrix doesn't necessarily have an eigenvalue, for instance the rotational matrix:
+\[ \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix} \]
+But all singular matrices have at least one eigenvalue: 0, since their nullspace is non-trivial.
+
+\newpage
+\begin{statement}{A characteristic polynomial is in the form: $p_A(x) = x^n + a_1x^{n-1} + \dots + a_n$ where $a_n = -\trace(A), a_0 = \pm\det(A)$}
+
+Suppose:
+\[ A = \mat \]
+And:
+\[ p_A(x) = \det(xI - A) \]
+Therefore: $p_A(0) = \det(0I-A)=\det(-A)=(-1)^n\det(A)$. And we know that $p_A(0)=a_n\implies a_n=\pm\det(A)$.
+
+To understand the rest, we must focus on the permutation definition of the determinant.
+
+To get the coefficients for $x^n$ and $x^{n-1}$ we have to consider every permutation that multiplies by at least $n$ and $n-1$ elements on $xI-A$'s diagonal (elements in the form $x-\alpha$). The only permutation that does this is the identity permutation. 
+
+This is obvious for $x^n$, the reasoning for $x^{n-1}$ is that any permutation that for at least $n-1$ values, $\sigma(i)=i$ (it gives $n-1$ values on the diagonal). But since a permutation is bijective, this means that the "last" permutation must remain the same. So $\sigma=I$.
+
+So that means it suffices to just focus on the identity permutation.
+
+So the coefficient for $x^n$, $a_0$ if you will, is the coefficient of $x^n$ in:
+\[ \prod_{i=1}^n (x-\alpha_{ii}) \]
+But the coefficient for $x^n$ in this polynomial is $1$.
+
+The coefficient for $x^{n-1}$ is going to be:
+\[ -\alpha_{11}x^{n-1} - \alpha_{22}x^{n-1} -\dots- \alpha_{nn}x^{n-1} = -x^{n-1}\sum_{i=1}^n \alpha_{ii} = -\trace(A)x^{n-1} \]
+
+So $a_n = -\trace(A) ~~ \qed$
+
+\end{statement}
+
+\newpage
+\begin{theorem}{Eigenvectors of different eigenvalues are linearly independent}
+
+We will prove this by induction. Our invariant will be P$(n) =$ "$n$ eigenvectors with different eigenvalues are linearly independent".
+
+\textbf{Base case:} $n=1$. This is trivial.
+
+\textbf{Inductive step:} assume $P(n)$. Suppose we have $v_{1}\dots v_{n+1}$ eigenvectors with respective $\lambda_1\dots\lambda_{n+1}$ (distinct) eigenvalues.
+
+Suppose there exists a zero linear combination of $n+1$ eigenvectors of $T$:
+\[ \alpha_1v_1 +\dots\alpha_{n+1}v_{n+1}=0 \]
+If we then take $T$ on both sides:
+\[ \alpha_1\lambda_1 v_1 +\dots+\alpha_{n+1}\lambda_{n+1}v_{n+1} = 0 \]
+Since all of the eigenvalues are distinct, there exists a $\lambda_i\neq0$. Without loss of generality, assume $\lambda_{n+1}\neq0$. We can then multiply both sides of the first equation by $\lambda_{n+1}$:
+\[ \left\{\begin{array}{l} \alpha_1\lambda_{n+1}v_1 +\dots+\alpha_{n+1}\lambda_{n+1}v_{n+1} = 0 \\ \alpha_1\lambda_1 v_1 +\dots+\alpha_{n+1}\lambda_{n+1}v_{n+1} = 0\end{array}\right. \]
+We can then subtract the second equation from the first and get:
+\[ \alpha_1(\lambda_{n+1}-\lambda_1)v_1 +\dots+ \alpha_n(\lambda_{n+1} - \lambda_n)v_n = 0 \]
+By our inductive assumption $\alpha_i(\lambda_{n+1}-\lambda_i) = 0$ (as $v_1\dots v_n$ are linearly independent). Since the eigenvalues are distinct, this means $\alpha_i=0$ (for $1\leq i\leq n$. So from our original zero sum:
+\[ \alpha_{n+1}v_{n+1}=0 \]
+So $\alpha_{n+1} = 0$, so all $\alpha_i=0$, so $v_1\dots v_{n+1}=0 \implies$ P$(n+1) ~~\qed$
+\end{theorem}
+
+\newpage
+\section{Matrix Forms}
+\subsection{Similarity}
+
+\begin{definition*}[simdef]
+
+Two matrices, $M_1$ and $M_2$ are \defcolor{similar} (denoted $M_1\sim M_2$) if they represent the same linear transformation.
+
+In other words, $M_1$ is similar to $M_2$ if and only if there exists a linear transformation $T$ and two bases $B$ and $C$ such that:
+\[ M_1 = \left[T\right]_B \]
+\[ M_2 = \left[T\right]_C \]
+
+\end{definition*}
+
+\begin{lemma*}{Given an invertible matrix $A$ and a basis $B$, there exists a basis $C$ such that $A=[I]^B_C$}
+
+Suppose $B=\tuple{v_1\dots v_n}$ we need to prove that there exists a basis $C$ such that $\forall i: [v_i]_C = C_i(A)$. 
+
+And suppose $A=\mat$
+
+Let $C_M$ be the matrix form of $C$ ($C_M$'s columns are $C$'s vectors). 
+
+So we need to prove there exists a basis $C=\set{u_1\dots u_n}$, such that $v_i=\alpha_{1i}u_1+\dots+\alpha_{ni}u_n = C_M\cdot C_i(A) = C_i(C_M\cdot A)$. 
+
+This means that $B_M = C_M\cdot A$, so $C_M = B_M\cdot A^{-1}$. Since $B_M$ and $A$ are invertible, so is $C_M$, therefore it represents a basis $\qed$
+
+\end{lemma*}
+
+\newpage
+\begin{theorem}{$A\sim B \iff$ there exists an invertible matrix $P$ such that $A=P^{-1}BP$}
+
+$\underline{\implies}$ \begin{minipage}[t]{\dimexpr\textwidth - 2cm} 
+Suppose $B$ and $C$ are our bases such that $A=[T]_B$ and $B=[T]_C$. We know that:
+\[ [I]^C_B [T]_C [I]^B_C = [T]_B \]
+And:
+\[ {[I]^B_C}^{-1} = [I]^C_B \]
+So let:
+\[ P\coloneqq [I]^B_C \]
+\[ \implies A = P^{-1}BP \]
+As required.
+\end{minipage}
+
+$\underline{\impliedby}$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Since $B$ is a matrix, it represents some linear transformation. Suppose $B=[T]^C_C$
+
+Since $P$ is invertible, we know by the previous lemma that there exists a basis $D$ such that $P=[I]^C_D$ (since $P^{-1}$ is invertible, we apply the lemma to it and the inverse, $P$, is just $[I]^D_C$) so:
+\[ A = P^{-1}BP = [I]^C_D [T]^C_C [I]^D_C = [T]^D_D \]
+So $A$ represents $T$ as well, so $A\sim B ~~\qed$
+
+\end{minipage}
+
+\end{theorem}
+
+\begin{theorem}{Similar matrices have the same characteristic polynomial}
+
+This makes sense because they represent the same linear transformation, so they have the same eigenvalues.
+
+Suppose $A\sim B$, so $A=P^{-1}BP$. So:
+\[p_A(x) = \det(xI-A) = \det(xP^{-1}P - P^{-1}BP) = \det(P^{-1}(xI-B)P) = \]
+\[ = \det(P^{-1})\det(xI-B)\det(P) = \det(xI-B) = p_B(x) ~~ \qed \]
+
+\end{theorem}
+
+This is also a rigorous proof to what I said at the beginning of the proof. Since similar matrices share a characteristic polynomial, they share the same eigenvalues (since eigenvalues are roots to the characteristic polynomial).
+
+\begin{statement}{$A\sim B \implies\trace(A)=\trace(B)$}
+
+Since $A\sim B$, there exists an invertible matrix such that $A=P^{-1}BP$ so:
+\[ \trace(A)=\trace(P^{-1}BP) \]
+We know that for two matrices, $\trace(AB)=\trace(BA)$ so:
+\[ \trace(P^{-1}BP) = \trace(BPP^{-1}) = \trace(B) ~~ \qed \]
+
+\end{statement}
+
+\newpage
+\subsection{Diagonalization}
+
+\begin{definition*}
+
+A matrix $A$ is called \defcolor{diagonalizable} if it is similar to a diagonal matrix.
+
+\end{definition*}
+
+\begin{definition}
+
+A linear transformation is \defcolor{diagonalizable} if one of its representations is a diagonal matrix.
+
+\end{definition}
+
+\noindent By the definition of \defcolor{similarity (\mref[definition]{simdef})} a linear transformation is diagonalizable if and only if a representation of it is diagonalizable (which is equivalent to every representation being diagonalizable).
+
+\begin{lemma*}{A diagonal matrix's eigenvalues are the values on its diagonal, and its eigenvectors are $e_i$}
+
+Let $A = \begin{pmatrix} \alpha_1 & & \\ & \ddots &  \\ & & \alpha_n \end{pmatrix}$
+
+Therefore $p_A(x) = (x-\alpha_1)\cdots(x-\alpha_n)$, so its eigenvalues are $\alpha_i$.
+
+Also note that $Ae_i=\alpha_i e_i$, so $e_i$ are eigenvectors (and every other eigenvector is some linear combination of them). $\qed$
+
+\end{lemma*}
+
+\begin{theorem}[sumGeomDiagEq]{A linear transformation is diagonalizable if and only if there exists a basis of its eigenvectors}
+
+$\underline{\implies}$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Since $T$ is diagonalizable, it has a representation, $[T]^B_B$ that is a diagonal matrix. Since it's diagonal it has a eigenvectors $e_1\dots e_n$. So $T$ has eigenvalues of $v_1\dots v_n$ where $[v_i]_B = e_i$, and since $\set{e_i}_{i=1}^n$ are linearly independent, so is $v_i$ (in fact, these eigenvectors are the vectors that make up $B$), so they form a basis.
+
+\end{minipage}
+
+\medskip
+
+$\underline{\impliedby}$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Let $B=\tuple{v_1\dots v_n}$ be the basis of eigenvectors. This means that $Tv_i=\lambda v_i$. So $C_i([T]_B)= [Tv_i]_B = [\lambda v_i]_B = \lambda e_i$. So $[T]_B$ is a diagonal matrix $\qed$
+
+\end{minipage}
+
+\end{theorem}
+
+\begin{corollary}{A matrix is diagonalizable if and only if there exists a basis of eigenvectors}
+
+$A$ is diagonalizable $\iff A\sim D$ where $D$ is a diagonal matrix $\iff$ $A$ and $D$ are both represented by the same linear transformation $T$ $\iff$ $T$ is diagonalizable $\iff$ there exists a basis of eigenvectors of $T$ $\iff$ there exists a basis of eigenvectors for $A ~~\qed$
+
+\end{corollary}
+
+\begin{corollary}{A linear transformation (and by extension, a matrix), $T$, is diagonalizable iff $\displaystyle\sum_{\lambda\in\spec(T)}\dim V_\lambda = \dim V$} 
+
+$\underline{\implies}:$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+$T$ is diagonalizable so there exists a basis of eigenvectors, let it be $B$. We can partition $B$ into subsets of eigenvectors with the same eigenvalue. Suppose:
+\[ B = B_1 \sqcup\dots\sqcup B_t \]
+$B_i$ must be a basis for $V_i$ since it's linearly independent and it must span $V_i$ since if not, we can add the vector not in its span to the basis $B$ and get a linearly independent set that's larger than $B$ which would be a contradiction. 
+
+So $\displaystyle\abs{B} = \sum_{i=1}^t \abs{B_i} \implies \dim V = \sum_{\lambda\in\spec} \dim V_\lambda$
+
+\end{minipage}
+
+\medskip
+
+$\underline{\impliedby}:$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Since eigenvectors with different eigenvalues are linearly independent, that means that $\displaystyle\bigoplus_{\lambda\in\spec(T)} V_\lambda$. So:
+\[ \dim(\bigoplus_{\lambda\in\spec(T)} V_\lambda) = \sum_{\lambda\in\spec(T)} \dim V_\lambda = \dim V \]
+So any basis of $\displaystyle\bigoplus_{\lambda\in\spec(T)} V_\lambda$ is a basis of $V$ and since any basis of $\displaystyle\bigoplus_{\lambda\in\spec(T)} V_\lambda$ is a basis of eigenvectors, that means $V$ has a basis of eigenvectors
+
+\end{minipage}
+
+$\qed$
+
+\end{corollary}
+
+Notice that this gives us a handy algorithm for finding the matrix that diagonalizes a matrix. Given the matrix $A$ with a basis $B=\tuple{v_1\dots v_n}$ of eigenvectors, we define:
+\[ P = \begin{pmatrix} \vert & & \vert \\ v_1 & \cdots & v_n \\ \vert & & \vert \end{pmatrix} \]
+Now notice that:
+\[ C_i(P^{-1}AP) = P^{-1}A\cdot C_i(P) = P^{-1}Av_i = \lambda_iP^{-1}v_i = \lambda_iP^{-1}C_i(P) = \lambda_iC_i(P^{-1}P) = \lambda_iC_i(I) \]
+So 
+\[ P^{-1}AP = \begin{pmatrix} \lambda_1 & & 0 \\ & \ddots & \\ 0 & & \lambda_n \end{pmatrix} \]
+Which is a diagonal matrix.
+
+How did we get to this? Well, notice that if $A$ is the representation of $T$ on the basis $C$ ($A=[T]_C$) and since $T$ is diagonalizable, then there exists a basis of eigenvectors $B$ such that $[T]_B$ is a diagonal matrix.
+
+Now remember that:
+\[ [T]_B = [I]^C_B [T]^C_C [I]^B_C \]
+So what we really want to find is $[I]^B_C$. So:
+\[ C_i([I]^B_C) = [b_i]_C \]
+Which is just an eigenvector of $T$ written relative to the basis of $A$. So $[b_i]_C$ is an eigenvector of $A$ (this is a simple proof: $A[b_i]_C = [T]^C_C[b_i]_C = [Tb_i]_C = [\lambda b_i]_C = \lambda[b_i]_C$).
+
+So we see that $[I]^B_C$ is just a matrix whose columns are $A's$ eigenvectors. So we define $P=[I]^B_C$.
+
+\bigskip
+
+\noindent Let's now refocus on characteristic polynomials.
+
+\begin{definition}
+
+The \defcolor{algebraic multiplicity} of an eigenvalue is its multiplicity in the characteristic polynomial. We denote the algebraic multiplicity of $\lambda$, an eigenvalue of $T$ as: $\mu_T(\lambda)$ (I may also use similar notation, like $\mu_\lambda$ or the like). Formally:
+
+\[ \mu_T(\lambda) \coloneqq \max\set{k\mid (x-\lambda)^k | p_T(x)} \]
+
+\end{definition}
+
+\begin{definition}
+
+The \defcolor{geometric multiplicity} of an eigenvalue is the dimension of its eigenspace. It is denoted as $\gamma_A(\lambda)$. Formally:
+
+\[ \gamma_T(\lambda) = \dim(V_\lambda) = \dim\nspace(T-\lambda I) \]
+
+\end{definition}
+
+The following lemma should be something you're familiar with from linear algebra 1, but in order to make sure you're up to date and whatnot, there's no harm in having it here.
+
+\newpage
+\begin{lemma}{Suppose $A, B$ are two square matrices (not necessarily of the same size) and $C$ is some other (not necessarily square) matrix. Then $\det\left(\begin{array}{c|c}A & C \\ \hline 0 & B\end{array}\right)=\det(A)\cdot\det(B)$}
+
+Suppose $A\in\bF^{n\times n}, B\in\bF^{m\times m}$ ($C\in\bF^{n\times m}$).
+
+And let:
+\[ M \coloneqq \left(\begin{array}{c|c}A & C \\ \hline 0 & B\end{array}\right) \in\bF^{n+m\times n+m}\]
+
+So by the permutation definition of the determinant:
+
+\[ \det(M) = \sum_{\sigma\in S_{n+m}} \sign(\sigma)\cdot\prod_{i=1}^{n+m} [M]_{i\sigma(i)} \]
+
+The idea is to prove that for any $\sigma\in S_{n+m}$ where if  $\exists n<i\leq n+m$ such that $1\leq\sigma(i)\leq n$ then there exists a $1\leq j\leq n$ such that $n<\sigma(j)$ (so $[M]_{j\sigma(j)}=0$ and the product of that permutation is $0$).
+
+So assume for the sake of a contradiction the contrary:
+\[ \forall 1\leq j\leq n: 1\leq\sigma(j)\leq n \]
+
+This means that $\forall k>n: \sigma(k)>n$ since $\sigma$ is bijective and therefore injective. (Think of it like this: all of $A$ is taken, so everything past it must be in $B$.) But this directly contradicts that $n<i\leq n+m$ and $\sigma(i)\leq n ~ \cont ~~ \qed$
+
+\end{lemma}
+
+\begin{theorem}[multIneq]{$1\leq\gamma_\lambda\leq\mu_\lambda\leq n$}
+
+Since $\lambda$ is an eigenvalue, it has a corresponding eigenvector, say $v$, so $v\in V_\lambda$, so $\gamma_\lambda=\dim V_\lambda\geq1$.
+
+Now, suppose $\gamma_\lambda=k$, so there exists $k$ linearly independent eigenevectors $v_1\dots v_k$. If we expand this to a basis $\tuple{v_1\dots v_k, \hat{v}_{k+1}\dots\hat{v}_n}$. So:
+\[ P\coloneqq\begin{pmatrix} \vert&&\vert\\v_1&\cdots&\hat{v}_n\\\vert&&\vert\end{pmatrix} \]
+Is invertible. And:
+\[ AP = \begin{pmatrix} \vert&&\vert&&\vert\\\lambda v_1&\cdots&\lambda v_k&\cdots&A\hat{v}_n\\\vert&&\vert&&\vert\end{pmatrix} \]
+
+Also notice that $P^{-1}v_i=P^{-1}C_i(P)=C_i(P^{-1}P)=C_i(I)=e_i$. So:
+\[ P^{-1}AP = \begin{pmatrix} \vert&&\vert&&\vert\\\lambda e_1&\cdots&\lambda e_k&\cdots&P^{-1}A\hat{v}_n\\\vert&&\vert&&\vert\end{pmatrix} = \left(\begin{array}{c|c}\lambda I_k & *\\\hline 0 & *\end{array}\right)\]
+Let this matrix be $M$. So $A\sim M\implies p_A(x)=p_M(x)$.
+
+And we know that:
+\[ p_M(x) = \det(xI-M) = \det\left(\begin{array}{c|c} (x-\lambda)I_k & *\\\hline 0 & *\end{array}\right) = \det((x-\lambda)I_k)\det(*)=(x-\lambda)^k s(x) \]
+For some polynomial $s(x)$.
+
+So the multiplicity of $\lambda$ in $p_M(x)$ and therefore $p_A(x)$ is at least $k$ (since we know almost nothing about $s(x)$). So $\mu_\lambda\geq\gamma_\lambda ~~\qed$
+
+\end{theorem}
+
+\newpage
+
+\begin{theorem}{A linear transformation, $T$, is diagonalizable iff the algebraic multiplicity of every eigenvalue is equal to its geometric multiplicity and $p_T(x)$ can be fully factorized}
+
+$\underline{\implies}:$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+We know that $T$ is diagonalizable if and only if:
+\[ \sum_{\lambda\in\spec(T)}\gamma_T(\lambda) = \dim V \] 
+We also know that the degree of the characteristic polynomial is $\dim V$ and the sum of the algebraic multiplicities must be less than or equal to the degree. So:
+\[ \sum_{\lambda\in\spec(T)} \mu_T(\lambda) \leq \dim V \]
+By the previous theorem, \theoremcolor{\mref[theorem]{multIneq}}:
+\[ \dim V = \sum_{\lambda\in\spec(T)}\gamma_T(\lambda) \leq \sum_{\lambda\in\spec(T)} \mu_T(\lambda) \leq \dim V \]
+Which means that:
+\[ \sum_{\lambda\in\spec(T)} \mu_T(\lambda) = \sum_{\lambda\in\spec(T)}\gamma_T(\lambda) = \dim V\]
+Which can only be true if $\forall\lambda\in\spec(T):~\gamma_T(\lambda)=\mu_T(\lambda)$ (since otherwise, the sum of geoemtric multiplicities would be less than the sum of algebraic multiplicities).
+
+This also means that $p_T(x)$ is fully factorizable, since the sum of the alegbraic multiplicities equals the degree of $p_T(x)$.
+
+\end{minipage}
+
+\medskip
+
+$\underline{\impliedby}:$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Since $p_T(x)$ is fully factorizable:
+\[ \sum_{\lambda\in\spec(T)} \mu_T(\lambda) = \deg(p_T(x)) = \dim V \]
+So:
+\[ \sum_{\lambda\in\spec(T)} \gamma_T(\lambda) = \dim V \]
+Which means $T$ is diagonalizable (by the corollary of \theoremcolor{\mref[theorem]{sumGeomDiagEq}})
+
+\end{minipage}
+
+$\qed$
+
+\end{theorem}
+
+\newpage
+\subsection{Triangularization}
+
+Notice that if $p_T(x)$ is fully factorizable, it doesn't mean that $T$ is diagonalizable. But does it have any other significance? 
+
+It turns out that it does. 
+
+\begin{definition*}
+
+A matrix $A$ is \defcolor{triangularizable} if it is similar to an upper triangle matrix
+
+\end{definition*}
+
+\begin{theorem*}{A linear transformation $T$ is triangularizable $\iff ~ p_T(x)$ is fully factorizable}
+
+$\underline{\implies}:$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Since $T$ is triangularizable, there exists a basis $B$ such that:
+\[ [T]_B = \begin{pmatrix} \lambda_1 & & * \\ & \ddots & \\ 0 & & \lambda_n \end{pmatrix} \]
+So:
+\[ p_T(x) = \det\begin{pmatrix} x-\lambda_1 & & * \\ & \ddots & \\ 0 & & x-\lambda_n \end{pmatrix} = (x-\lambda_1)\cdots(x-\lambda_n) \]
+Which is fully factorized.
+
+\end{minipage}
+
+$\underline{\impliedby}:$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+We will prove this by induction on the dimension of $V$.
+
+Let:
+
+$P(n) =$ "Given a vector space $V$ where $\dim V = n$, and a linear transformation $T$ on $V$, if $p_T(x)$ is fully factorizable, then $T$ is triangularizable"
+
+\textbf{Base case}: $n=1$: This means that given any basis $B$, $[T]_B = \tuple{\lambda}$ which is an upper triangular matrix, so its characteristic polynomial is fully factorizable.
+
+\textbf{Inductive step}: Assume $P(n)$. Let $V$ be a vector space such that $\dim V=n+1$.
+
+Since $p_T(x)$ is fully factorizable, $\exists\lambda_1\in\bF: p_T(\lambda_1)=0$. Let $v_1$ be an eigenvector of eigenvalue $\lambda_1$. Let $B=\tuple{v_1,\hat{v}_1\dots \hat{v}_n}$ the completion of $(v_1)$ to a basis. So:
+\[ [T]_B = \begin{pmatrix} \lambda_1 & \hori*\hori \\ \begin{array}{c} \vert\\0\\\vert\end{array} & A\end{pmatrix} \]
+Where $A\in\bF^{n\times n}$. 
+
+Since $p_T(x) = \det(xI-[T]_B)=(x-\lambda_1)\det(xI-A)=(x-\lambda_1)p_A(x)$. Since $p_T(x)$ is fully factorizable, $p_A(x)$ is fully factorizable. By $P(n)$ this means it is triangularizable. So there exists a matrix $P'$ such that $P'^{-1}AP'=U'$ where $U'$ is an upper triangle matrix.
+
+Let $P\coloneqq(1)\oplus P'$. This means that $P^{-1}=(1)\oplus P'^{-1}$. So:
+\[ P^{-1}[T]_B P = \begin{pmatrix} 1 & \hori0\hori \\ \begin{array}{c}\vert\\0\\\vert\end{array} & P'^{-1} \end{pmatrix} \begin{pmatrix} \lambda_1 & \hori*\hori \\ \begin{array}{c} \vert\\0\\\vert\end{array} & A\end{pmatrix} \begin{pmatrix} 1 & \hori0\hori \\ \begin{array}{c}\vert\\0\\\vert\end{array} & P' \end{pmatrix} = \begin{pmatrix} \lambda_1 & \hori*\hori \\ \begin{array}{c}\vert\\0\\\vert\end{array} & P'^{-1}AP \end{pmatrix}\]
+\[ = \begin{pmatrix} \lambda_1 & \hori*\hori \\ \begin{array}{c}\vert\\0\\\vert\end{array} & U' \end{pmatrix} \]
+
+Which is an upper triangle matrix, let's denote it as $U$. So $[T]_B\sim U$, which means $T$ is triangularizable $\qed$
+
+\end{minipage}
+
+\end{theorem*}
+
+\begin{corollary}{Any linear transformation above $\bC$ is triangularizable}
+
+Let be $T$ be a linear transformation above $\bC$. Since all polynomials above $\bC$ are fully factorizable, $p_T(x)$ is fully factorizable, which means $T$ is triangularizable.
+
+\end{corollary}
+
+\begin{statement}{Notice that this gives us a recursive algprithm for triangularizing matrices. Say you're given a matrix $A$:
+\begin{enumerate}
+    \item Find an eigenvector to $A$, let it be $v$.
+    \item Complete $v$ to a basis $\tuple{v,u_2\dots u_n}$ and define the matrix $M$ columns are vectors in $B$ (where $v$ is first).
+    \item Notice that:
+    \[ M^{-1}AM = \begin{pmatrix} \lambda & \hori*\hori \\ \begin{array}{c}\vert\\0\\\vert\end{array} & A' \end{pmatrix} \]
+    Where $A'\in\bF^{n-1\times n-1}$
+    \item Execute the algorithm on $A'$ to get a matrix $P'$ that triangularizes $A'$
+    \item $P\coloneqq M\cdot (\tuple{1}\oplus P')$ will be the matrix that triangularizes $A$
+\end{enumerate}
+\medskip}
+
+The idea behind this algorithm comes from the recursive nature of the proof of the above theorem. 
+
+We will quickly prove that this algorithm works. First off, it obviously terminates since each step gives you a smaller matrix. 
+
+Notice that:
+\[ P^{-1} = (\tuple{1}\oplus P'^{-1})\cdot M^{-1} \]
+\[ \implies P^{-1}AP = (\tuple{1}\oplus P'^{-1})\cdot M^{-1} \cdot A \cdot M\cdot (\tuple{1}\oplus P') = \]
+\[ = (\tuple{1}\oplus P'^{-1})\cdot\ \begin{pmatrix} \lambda & \hori*\hori \\ \begin{array}{c}\vert\\0\\\vert\end{array} & A' \end{pmatrix} \cdot (\tuple{1}\oplus P') = \begin{pmatrix} \lambda & \hori*\hori \\ \begin{array}{c}\vert\\0\\\vert\end{array} & P^{-1}A'P \end{pmatrix} \]
+Since $P'^{-1}A'P'$ is an upper triangle matrix, $P^{-1}AP$ is an upper triangle matrix.
+
+\end{statement}
+
+\newpage
+\subsection{Zeroing Polynomials}
+
+\begin{definition*}
+
+Given a polynomial $p(x) = \displaystyle\sum_{i=0}^d a_i x^{d-i}$ we define $p(A)\coloneqq\displaystyle\sum_{i=0}^d a_i A^{d-i}$ where $A^0=I$
+
+\end{definition*}
+
+\begin{lemma*}{For every matrix, there exists a polynomial $0\neq p(x)$ such that $p(A)=0$}
+
+If we define $S=\set{A^i\mid 0\leq i\leq n^2}$ over the vector space $\bF^{n\times n}$, it must be linearly dependent since $\abs{S}=n^2+1>\dim\bF^{n\times n}$. So there exists scalars $\alpha_0\dots \alpha_{n^2}$ (where at least one is non-zero) such that:
+\[ \sum_{i=0}^{n^2} \alpha_i A^{n^2-i} = 0 \]
+So if we define:
+\[ p(x) = \sum_{i=0}^{n^2} \alpha_i x^{n^2-i} \]
+We get that $p(A)=0~~~\qed$
+
+\end{lemma*}
+
+\newpage
+
+\begin{theorem}[cayHamThm,The Cayley-Hamilton Theorem]{$p_A(A)=0$}
+
+Suppose $A\in\bF^{n\times n}$. This means:
+\[ (xI - A)\cdot\adj(xI-A) = \det(xI-A)I = p_A(x)I \]
+Let $B\coloneqq\adj(xI-A)$. Since $[B]_{ij} = (-1)^{i+j}\det((xI-A)_{ji})$, $B$ is a matrix of polynomials up to degree $n-1$ (since removing a row and column from $xI-A$ and taking the determinant means that the max polynomial degree is one less than the max polynomial degree of $xI-A$). Suppose:
+\[ B = x^{n-1}B_{n-1} + \dots + xB_1 + B_0 = \sum_{i=0}^{n-1} B_i x^i \]
+So:
+\[ (xI-A)B = (xI-A)\sum_{i=0}^{n-1} B_i x^i = \sum_{i=0}^{n-1} B_i x^{i+1} -  \sum_{i=0}^{n-1} AB_i x^i = B_{n-1}x^n+\sum_{i=1}^{n-1} (B_{i-1}-AB_i)x^i - AB_0 \]
+And suppose:
+\[ p_A(x) = \sum_{i=0}^{n-1} c_i x^i + x^n \]
+So:
+\[ p_A(A) = \sum_{i=0}^{n-1} c_i A^i + A^n \]
+This means that:
+\[ B_{n-1}x^n+\sum_{i=1}^{n-1} (B_{i-1}-AB_i)x^i - AB_0 p_A(x) = x^nI + \sum_{i=0}^{n-1} c_i x^iI \]
+So:
+\[ B_{n-1} = I \]
+\[ B_{i-1}-AB_i = c_i \]
+\[ c_0I = -AB_0 \]
+\[ \implies p_A(A) = A^n + \sum_{i=1}^{n-1} (B_{i-1}-AB_i) A^i -AB_0 \]
+\[ \sum_{i=1}^{n-1} (B_{i-1}-AB_i)A^i = \sum_{i=1}^{n-1} B_{i-1}A^i - \sum_{i=1}^{n-1}B_iA^{i+1} = \sum_{i=1}^{n-1} B_{i-1}A^i - \sum_{i=2}^n B_{i-1}A^i = B_0A - B_{n-1}A^n \]
+Since $B_{n-1}=I$, we see that this equals $B_0A-A^n$
+\[ \implies p_A(A) = A^n + AB_0 - A^n - AB_0 = 0 ~~ \qed \]
+\end{theorem}
+
+\begin{definition}
+
+A \defcolor{simplified polynomial} is a polynomial whose leading coefficient is $1$
+
+\end{definition}
+
+\begin{definition}
+
+An \defcolor{irreducible} polynomial is a simplified polynomial that cannot be written as the product of two polynomials of smaller degree.
+
+\end{definition}
+
+\newpage
+\begin{lemma}[polyFac]{Every simplified polynomial can be written as a unique product of irreducible polynomials (up to order)}
+
+\begin{itemize}
+    \item Existence: We will prove this by strong induction. Let: $P(n) = $ "A polynomial of degree $n$ can be written as a product of irreducible polynomials"
+    
+    \textbf{Base case:} $n=1$: This means $P(x)=x-\alpha$, which is irreducible $\implies P(1)$
+    
+    \textbf{Inductive step} assume $P(1)\dots P(n)$ we must prove $P(n+1)$. 
+    Let $P(x)$ be a simplified polynomial of degree $n+1$. If $P(x)$ is irreducible, then it is a product of irreducible polynomials (itself). Otherwise, it is the product of two simplified polynomials of a smaller degree, let them be $q(x), r(x)$. By our inductive assumption, $r(x)$ and $q(x)$ are products of irreducible polynomials $\implies P(x)$ is a product of irreducible polynomials.
+    
+    \item Uniqueness: Assume there exists polynomials which have two factorizations of irreducible polynomials. This means there exists a minimum degree where there exists a polynomial with two distinct factorizations. Let this degree be $d$. Let $P(x)$ be a polynomial of degree $d$ with two distinct factorizations. Suppose:
+    \[ P(x) = \begin{cases} f_1\cdots f_t \\ g_1\cdots g_s \end{cases} \]
+    Where $f_i, g_i$ are irreducible.
+    
+    Since these two factorizations are distinct, $\forall i,j: f_i\neq g_j$, since otherwise, $\frac{P(x)}{f_i}=\frac{P(x)}{g_j}$ has two distinct factorizations, while their degree is less than $P(x)$'s.
+    
+    Let:
+    \[ Q = f_2\cdots f_t \]
+    \[ R = g_2\cdots g_s \]
+    \[ \implies f_1Q = g_1R \implies (g_1-f_1)Q = f_1(P-Q) \]
+    Since $f_1$ doesn't divide $g_1-f_1$ (otherwise, $\frac{g_1}{f_1}-1$ would be a polynomial, so $g_1=f_1$ in contradiction)
+    
+    So $f_1$ must divide $Q$, so $f_1$ appears in the factorization of $Q$, which is a contradiction since $q_2\dots q_s\neq f_1 ~~ \cont$
+\end{itemize}
+
+Note that this proof is almost the same as the proof for prime factorization.
+
+\end{lemma}
+
+\newpage
+
+\begin{lemma}{If $f$ is a zero polynomial of $A$ (ie. $f(A)=0$), then $p_A(x)\mid f(x)^n$}
+
+Let $d\coloneqq \deg(f)$. We want a matrix polynomial:
+\[ B(x) = \sum_{i=0}^{d-1} x^iB_i \]
+Such that $(xI-A)B(x)=f(x)I$ (this implies that $p_A(x)\det B(x) = \det(f(x)I)=f(x)^n$ so $p_A(x)$ divides $f(x)^n$)
+
+This means that:
+\[ (xI-A) \sum_{i=0}^{d-1} x^iB_i = \sum_{i=0}^{d-1} x^{i+1}B_i - \sum_{i=0}^{d-1} x^iAB_i = \sum_{i=1}^d x^iB_{i-1} - \sum_{i=0}^{d-1} x^iAB_i \]
+\[ = x^dB_{d-1} + \sum_{i=1}^{d-1} x^iB_{i-1} - \sum_{i=1}^{d-1} x^iAB_i - AB_0 = x^dB_{d-1} + \sum_{i=1}^{d-1} x^i(B_{i-1}-AB_i) - AB_0 \]
+
+Suppose:
+\[ f(x)I = x^dI + \sum_{i=0}^{d-1} \beta_ix^iI \]
+This is true only if:
+\[ B_{d-1} = I \]
+\[ \forall 1\leq i\leq d-1: B_{i-1}-AB_i = \beta_i I \]
+\[ -AB_0 = \beta_0I \]
+
+So we define:
+\[ B_{d-1} = I \]
+\[ B_{i-1} = \beta_i I + AB_i \]
+But this doesn't necessarily mean $-AB_0=\beta I$.
+
+Since $f(A) = 0$:
+\[ 0 = A^d + \sum_{i=0}^{d-1} \beta_iA^i = A^d + \sum_{i=1}^{d-1} A^i(B_{i-1}-AB_i) + \beta_0I= A^d + \sum_{i=1}^{d-1} A^iB_{i-1} - \sum_{i=1}^{d-1} A^{i+1}B_i + \beta_0I = \]
+\[ = A^d - \sum_{i=2}^d A^iB_{i-1} + \sum_{i=1}^{d-1} A^iB_{i-1} + \beta_0I = \]
+\[ = A^d - A^dB_{d-1} - \sum_{i=2}^{d-1} A^iB_{i-1} + \sum_{i=2}^{d-1} A^iB_{i-1} + B_0A + \beta_0I = A^d(I-B_{d-1}) + AB_0 + \beta_0I = AB_0 + \beta_0I\]
+Which means that:
+\[ 0 = AB_0 + \beta_0I \implies -AB_0 = -\beta_0 I  ~~ \qed \]
+
+\end{lemma}
+
+\begin{definition}
+
+The \defcolor{minimal polynomial} of a matrix is a simplified zeroing polynomial with the minimum possible degree. We denote it as $m_A(x)$
+
+\end{definition}
+
+So, for example, given a nilpotent matrix, $A$ with nilpotent degree of $k$ (ie. $A^k=0$ and $A^{k-1}\neq0$)), the minimal polynomial of $A$ is $x^k$
+
+\newpage
+\begin{lemma}{The minimal polynomial is unique}
+
+Assume that $m'_A(x)$ is also a minimal polynomial. So it has the same degree as $m_A(x)$ Since both $m_A(x), m'_A(x)$ are simplfied, $\deg(m_A(x)-m'_A(x))<m_A(x)$. Let $p(x)$ be the simplified form of $m_A(x)-m'_A(x)$ (divide it by its leading coefficient). So:
+\[ p(A) = m_A(A)-m'_A(A) = 0 - 0 = 0 \]
+So $p(x)$ is also a zeroing polynomial. Since $\deg(p)<\deg(m_A)$, it must be the zero polynomial. So $m_A-m'_A=0\implies m_A=m'_A~~\qed$
+
+\end{lemma}
+
+\begin{lemma}{Given a zeroing polynomial $p(x)$, $m_A\mid p$}
+
+We know that there exists some polynomial $q(x)$ and $r(x)$ such that $\deg(r)<\deg(m_A)$ such that:
+\[ p(x) = m_A(x)q(x) + r(x) \]
+This means that $(p-m_A\cdot q)(x) = r(x) \implies r(A)=0$, which can only be true if $r(x)=0$. So $m_A \mid p ~~\qed$
+
+\end{lemma}
+
+\begin{theorem}{$m_A(x)$ and $p_A(x)$ have the same factorization up to multiplicity}
+
+Suppose $m_A(x)=f_1^{k_1}\cdots f_t^{k_t}$, where $f_i$ is an irreducible polynomial.
+
+Suppose $p_A(x)=g_1^{l_1}\cdots g_s^{l_s}$.
+
+We know:
+\[ m_A(x)\mid p_A(x) \mid m_A(x)^n \]
+So every $f_i$ must appear in the factorization of $p_A(x)$. Furthermore, if we suppose $f_i=g_i$, then $k_i\leq l_i$). And $k\leq s$. 
+
+And every $g_i$ must appear in the factorization of $m_A(x)^n$, so for every $g_i$, there exists an $f_j$ equal to it. So:
+\[ \forall i \exists j: f_i = g_j \land g_i = f_j \]
+So the factorizations are the same (just the multiplicity of every irreducible polynomial in $p_A(x)$'s factorization is greater than or equal to its multiplicity in $m_A(x)$'s.
+
+\end{theorem}
+
+\begin{lemma}[simZero]{$A\sim B \implies (f(A)=0\implies f(B)=0)$}
+
+Let $f(x)$ be a zeroing polynomial of $A$. Suppose:
+\[ f(x) = \sum_{i=0}^d \alpha_i x^i \]
+So:
+\[ \sum_{i=0}^d \alpha_i A^i \]
+And suppose:
+$B = P^{-1}AP$. So:
+\[ f(B) = \sum_{i=0}^d \alpha_i P^{-1}AP = P^{-1}\left(\sum_{i=0}^d \alpha_i A\right)P = P^{-1}\cdot0P = 0 ~~ \qed \]
+
+\end{lemma}
+
+\begin{theorem}{The minimal polynomials of two similar matrices are equal}
+
+Suppose $A\sim B$. So by the \lemmacolor{\mref*{previous lemma}{simZero}}: $m_A(B)=0, m_B(A)=0$, so $m_B\mid m_A \mid m_B \implies m_A=m_B~~\qed$
+
+\end{theorem}
+
+\begin{definition}
+
+The \defcolor{mimimal polynomial} of a linear transformation is the minimal polynomial of one of its matrix representations.
+
+\end{definition}
+
+By the previous theorem, this is well-defined, since the minimal polynomial of similar matrices are the same.
+
+\newpage
+\subsection{Invariant Subspaces}
+
+\begin{definition*}
+
+A subspace $U\leq V$ is \defcolor{invariant} under a linear transformation $T$ if $T(U)\leq U$
+
+\end{definition*}
+
+\noindent So if $U$ is invariant under $T$, $T\mid_U:U\to U$ defined like so:
+\[ T\mid_U(u) = Tu \]
+($T$ reduced to $U$) is a valid linear transformation
+
+Note that eigenspaces are invariant.
+
+\begin{lemma*}{If $V_1\dots V_t$ are invariant subspaces such that $V=V_1\oplus\dots V_t$ then given any linear transformation $T$ over $V$, $\image T = \image T_1\oplus\dots\image T_t$ and $\ker T=\ker T_1\oplus\dots\oplus\ker T_t$ where $T_i\coloneqq T\mid_{V_i}$}
+
+Let $B_i$ be a basis of $V_i$.
+
+Since $\image T_{V_i}, \ker T_{V_i} \subseteq V_i$, since $V_i$ are invariant, and $\image T_{V_i}\cap\image T_{V_j}, \ker T_{V_i}\cap\ker T_{V_j} = \zspace$ for $i\neq j$.
+
+\begin{itemize}
+\item Suppose $v\in\ker T$, so there exists $v_i\in V_i$ such that $v=v_1+\dots+v_t$. So $Tv = Tv_1+\dots+Tv_t=0$, assume for the sake of a contradiction that $Tv_1\dots Tv_k\neq0$, so that means that $Tv_k=-Tv_1-\dots-Tv_{k-1}$ since $Tv_i\in V_i$ this means that $Tv_k\in V_1\oplus\dots\oplus V_{k-1}$ which means that $V_k$ and $V_1\oplus\dots\oplus V_{k-1}$ aren't disjoint, in contradiction.
+
+\item Suppose $Tv\in\image T$, and so $\exists v_i\in V_i: Tv=v_1+\dots+v_t$.
+
+Since $v\in V_1\oplus+\dots+V_t$ there exist $u_i\in V_i$ such that $v=u_1+\dots+u_t$, which means $Tv=Tu_1+\dots+Tu_t$. Since the sum is direct, every sum is unique, which means that $v_i=Tu_i\implies v_i\image T\cap V_i\implies v_i\image T_i$
+
+\end{itemize}
+
+$\qed$
+
+\end{lemma*}
+
+\begin{lemma}[matInvarRepLemma]{$V_1\dots V_t$ are invariant subspaces with bases $B_i$, such that $V=V_1\oplus\dots\oplus V_t$. If we define the basis $B\coloneqq B_1\sqcup\dots\sqcup B_t$, then:
+\[ [T]_B = \begin{pmatrix} \fbox{$A_1$} & & \\ & \ddots & \\ & & \fbox{$A_t$} \end{pmatrix} \] }
+
+Let $v_j$ be the $j$-th vector in $B$.
+
+Let $a_0=0, a_i \coloneqq \dim V_i$. So the elements between (inclusive) the indexes $a_{i-1}+1\dots a_i$ in $B$ are the vectors in $B_i$. Notice that:
+\[ \forall a_{i-1} < j \leq a_i : Tv_j \in V_i \implies Tv_j\in\lspan(B_i) = \lspan\tuple{v_{a_{i-1}+1}\cdots v_{a_i}} \implies [Tv_j]_B \in \lspan\tuple{e_{a_{i-1}+1}\cdots e_{a_i}} \]
+
+So these vectors create a block.
+
+\end{lemma}
+
+\noindent Our goal in this section is to find invariant subspaces $V_1\dots V_t$ such that:
+\[ V = V_1\oplus\dots\oplus V_t \]
+
+Note that if $T$ is diagonalizable, then its eigenspaces satisfy this.
+
+If $T$ isn't diagonalizable, then its $V_\lambda$s wont be sufficiently "large" enough to "cover" $V$. But remember that:
+\[ V_\lambda = \nspace(\lambda I - T) \]
+And this is a subspace of $\nspace((\lambda I - T)^k)$ forall natural $k$. So perhaps if we take this to the extreme, with $\nspace((\lambda I - T)^n)$ where $n\coloneqq\dim V$, it will suffice? It turns out it does.
+
+\newpage
+\begin{definition}
+
+Given a linear transformation with an eigenvalue $\lambda$, we define the \defcolor{generalized eigenspace of $\lambda$} to be:
+\[ K_\lambda\coloneqq \nspace\left((\lambda I - T)^n\right) \]
+Where $n\coloneqq\dim V$
+
+\end{definition}
+
+\noindent Our goal is to now prove that these subspaces satisfy our need.
+
+\begin{definition}
+
+Given $T$ a linear transformation, $0\neq v\in V$, we define $v$'s \defcolor{path} to be:
+\[ E_v = \tuple{T^{m-1}v, T^{m-2}v,\cdots Tv, v} \]
+Where $\forall 0\leq t<m: T^tv \neq 0$ and $T^mv=0$
+
+We say $E_v$ has a \defcolor{length} of $m$.
+
+\end{definition}
+
+\noindent Note that not every vector (or even linear transformation) has a path. For example, any isomorphic linear transformation doesn't have a path (since $T^mv$ will never be $0$).
+
+\begin{lemma}{A path is linearly independent}
+
+Assume $E_v=\tuple{T^{m-1}v\dots Tv, v}$ is a path of length $m$.
+
+Suppose:
+\[ \sum_{i=0}^m \alpha_iT^iv = 0 \]
+\[ \implies \sum_{i=0}^m \alpha_i T^{m-1+i}v = 0 \]
+But $\forall t\geq m: T^tv = 0$, as the length of $E_v$ is $m$. So:
+\[ \alpha_0T^{m-1}v = 0 \]
+Since $T^{m-1}v\neq0\implies\alpha_0=0$
+
+If we take $T^{m-2}$ we see:
+\[ \sum_{i=1}^m \alpha_i T^{m-2+i}v = 0 \]
+\[ \implies \alpha_1 T^{m-1}v = 0 \implies \alpha_1 = 0 \]
+If we continue doing this, we see that $\forall i:\alpha_i=0$ which means $E_v$ is linearly indpendent $\qed$
+
+\end{lemma}
+
+\begin{lemma}[expToZeroLemma]{$\forall t\in\bN: (T-\lambda I)^tv=0\implies (T-\lambda I)^nv=0$}
+
+This is trivial if $v=0$, otherwise:
+
+\begin{itemize}
+    \item If $t\leq n$ then this is trivial. This means $n-t\geq0$, so $(T-\lambda I)^n = (T-\lambda I)^t(T-\lambda I)^{n-t} = 0(T-\lambda I)^{n-t}=0$
+    \item Else if $t>n$, so there exists some $m\leq l: (T-\lambda I)^mv=0, (T-\lambda I)^{m-1}v\neq0$ (this requires $v\neq0$). So we form a path:
+    \[ E_v = \tuple{(T-\lambda I)^{m-1}\dots (T-\lambda I)v} \]
+    Since $E_v$ is linearly independent by our previous lemma, that means $m\leq n$ and $(T-\lambda I)^m=0\implies (T-\lambda I)^n=0 ~~ \qed$
+\end{itemize}
+
+\end{lemma}
+
+\newpage
+\begin{lemma}[pathInvarLemma]{If $E_v$ is a path, $\lspan(E_v)$ is invariant under $T$}
+
+Let $W\coloneqq\lspan(E_v)$, and $m$ be the length of $E_v$.
+\[ \implies T(W) = \lspan(T(E_v)) = \lspan(T^mv,T^{m-1}v\dots Tv) = \lspan(T^{m-1}v\dots Tv) = \]
+\[ = \lspan(E_v\setminus\set{v}) \subseteq \lspan(E_v) = W ~~ \qed \]
+
+\end{lemma}
+
+\begin{lemma}{Given a linear transformatio, $T$, and a polynomial $p(x)$, $T\circ f(T) = f(T) \circ T$}
+
+Suppose:
+\[ p(x) = \sum_{i=0}^d \alpha_i x^i \]
+\[ \implies p(T) = \sum_{i=0}^d \alpha_i T^i \]
+\[ \implies T(p(T)) = T(\sum_{i=0}^d \alpha_i T^i) = \sum_{i=0}^d \alpha_i T^{i+1} \]
+\[ p(T)(T) = (\sum_{i=0}^d \alpha_i T^i)(T) = \sum_{i=0}^d \alpha_i T^{i+1} \]
+\[ \implies p(T)\circ T = T\circ p(T)  ~~ \qed \]
+
+\end{lemma}
+
+\begin{corollary}{$K_\lambda$ is invariant under any polynomial of $T$}
+
+First, we'll prove it's invariant under $T$. Suppose $v\in K_\lambda$:
+\[ \implies (\lambda I - T)^nTv = T(\lambda I - T)^nv = T0 = 0 \]
+So $Tv\in K_\lambda$ as required.
+
+We will prove the corollary by induction. $P(m)=$ "$K_\lambda$ is invariant under any polynomial of degree $m$".
+
+\textbf{Base case:} $m=1$, so $p(T)=\alpha T-\beta$. Suppose $v\in K_\lambda$ $p(T)v=\alpha Tv-\beta v\in K_\lambda$ as required.
+
+\textbf{Inductive step:} Assume $P(m)$, and $p(T) = \sum_{i=0}^{m+1} \alpha_i T^i$. Suppose $v\in K_\lambda$.
+\[ \implies p(T)v = \sum_{i=0}^{m+1} \alpha_i T^iv = \sum_{i=1}^{m+1} \alpha_i T^iv + \alpha_0 v = T(\sum_{i=0}^m \alpha_{i+1}T^iv) + \alpha_0v \]
+Since $\displaystyle\sum_{i=0}^m \alpha_{i+1}T^i$ is a polynomial of degree $m$, by $P(m)$, $\displaystyle\sum_{i=0}^m \alpha_{i+1}T^iv \in K_\lambda$, and by $P(1)\implies T(\displaystyle\sum_{i=0}^m \alpha_{i+1}T^i)\in K_\lambda$. So:
+\[ T(\sum_{i=0}^m \alpha_{i+1}T^iv) + \alpha_0v \in K_\lambda  ~~ \qed \]
+
+\end{corollary}
+
+\begin{lemma}{Suppose $0\neq v\in K_\lambda$, and $\mu\neq\lambda$, so $(\mu I - T)v\in K_\lambda$ and $(\mu I-T)v\neq0$ (which means $v\notin V_\mu$)}
+
+Since $\mu I - T$ is a polynomial of $T$m by our previous lemma, $K_\lambda$ is closed under $\mu I - T$, so $(\mu I - T)v\in K_\lambda$.
+
+Assume for the sake of a contradiction that $(\mu I - T)v = 0 \implies Tv = \mu v$.
+
+Since $v\in K_\lambda$:
+\[ (\lambda I - T)^nv = 0 \implies (\lambda I - T)^{n-1}(\lambda I - T)v = 0 \implies (\lambda I - T)^{n-1}(\lambda - \mu)v = 0 \]
+Since $\mu\neq\lambda$, $\lambda-\mu\neq0$, so:
+\[ (\lambda I - T)^{n-1}v = 0 \]
+If we do this revursively, we see:
+\[ (\lambda I - T)v = 0 \implies Tv = \lambda v \]
+But we know $Tv=\mu v$, so $\lambda=\mu \cont ~~ \qed$
+\end{lemma}
+
+\begin{lemma}{Suppose $\lambda\neq\mu$, then $K_\lambda\cap K_\mu = \zspace$}
+
+Suppose $v\in K_\lambda\cap K_\mu$ and assume for the sake of a contradiction that $v\neq0$. 
+
+By the previous lemma:
+\[ 0\neq(\mu I - T)v\in K_\lambda \]
+Let:
+\[ v_1\coloneqq (\mu I-T)v \]
+\[ \forall i>1: v_i\coloneqq (\mu I-T)v_{i-1} = (\mu I-T)^iv \]
+Inductively, we see $0\neq v_i\in K_\lambda$, which necessarily means $v_n\neq0$, but $v_n=(\mu I - T)^nv$, which contradicts that $v\in K_\mu ~~ \cont$, so $v=0 ~~ \qed$
+
+\end{lemma}
+
+\begin{definition}
+
+\[ I_\lambda \coloneqq \image\left((\lambda I - T)^n\right) \]
+
+\end{definition}
+
+\begin{lemma}{$I_\lambda$ is invariant under $T$}
+
+Suppose $v\in I_\lambda$, so $\exists u\in V: v=(\lambda I - T)^nu$. So:
+\[ Tv = T(\lambda I - T)^nu = (\lambda I - T)^nTu \in I_\lambda ~~ \qed \]
+
+\end{lemma}
+
+\begin{lemma}{$V=K_\lambda\oplus I_\lambda$}
+
+\begin{itemize}
+    \item $K_\lambda\cap I_\lambda=\zspace$.
+    
+    Suppose $v\in K_\lambda\cap I_\lambda$ This means that:
+    \[ (\lambda I - T)^nv = 0 \]
+    \[ \exists u\in V: (\lambda I - T)^nu = v \]
+    So:
+    \[ \implies (\lambda I - T)^{2n}u = 0 \]
+    By \lemmacolor{\mref*{a previous lemma}{expToZeroLemma}} this means that 
+    \[ (\lambda I - T)^nu = 0 \implies v=0 \]
+    So $K_\lambda\cap I_\lambda = \zspace$.
+    
+    \item $K_\lambda+I_\lambda=V$:
+    
+    We know:
+    \[ \dim(K_\lambda + I_\lambda) = \underbrace{\dim K_\lambda + \dim I_\lambda}_{\begin{array}{c} \text{\footnotesize By the rank-nullity theorem} \\ =\dim V \end{array}} - \underbrace{\dim(K_\lambda\cap I_\lambda)}_{=\dim\zspace=0} = \dim V \]
+    So $K_\lambda+I_\lambda=V$
+\end{itemize}
+
+\[ \implies V = K_\lambda\oplus I_\lambda ~~ \qed \]
+
+\end{lemma}
+
+\begin{lemma}{If $T$ is nilpotent, then:
+\begin{itemize}
+    \item $p_T(x)=x^n$
+    \item $T$'s only eigenvalue is $0$
+\end{itemize}}
+
+This is trivial in the case that $T=0$, otherwise:
+
+Since $T$ is nilpotent, there exists an $m$ such that $T^m=0$ while $T^{m-1}\neq0$. So $m_T(x)\mid x^m \implies m_T(x)=x^k$ for some $1\leq k\leq m$. (In fact $k=m$: if $k<m$, that means $T^k\neq0$ (as $T^{m-1}\neq0$), so $k=m$)
+
+Since the characteristic polynomial and the minimal polynomial have the same irreducible factorization, and $x$ is irreducible:
+\[ p_T(x)=x^n \]
+(Since the degree of $p_T$ is $n$)
+
+So the only root of $p_T(x)$ is $0 ~~ \qed$
+
+\end{lemma}
+
+\begin{lemma}[invarCharPolyLemma]{Let $T$ be a linear transformation, $\lambda\in\bF$. Let $T_0\coloneqq T\mid_{K_\lambda}$. So $p_{T_0}(x)=(x-\lambda)^{\dim K_\lambda}$}
+
+Let:
+\[ L = T-\lambda I : K_\lambda \longrightarrow K_\lambda \]
+$L$ is nilpotent since $\forall v\in K_\lambda: L^nv = (T-\lambda I)^nv = (-1)^n(\lambda I - T)^nv =0$.
+
+So by the previous lemma:
+\[ p_L(x) = x^{\dim K_\lambda} \]
+But at the same time:
+\[ p_L(x) = \det(xI - L) = \det(xI + \lambda I - T) = \det((x+\lambda)I-T) = p_T(x+\lambda) \]
+
+Which means that:
+\[ p_T(x+\lambda) = p_L(x) \implies p_T(x) = p_L(x-\lambda) = (x-\lambda)^{\dim K_\lambda}  ~~ \qed \]
+
+\end{lemma}
+
+\newpage
+\begin{lemma}{$\dim K_\lambda=\mu_\lambda$}
+
+Let $B'$ be a basis for $K_\lambda$, $B''$ a basis for $I_\lambda$. So if we define:
+\[ B\coloneqq B'\sqcup B'' \]
+$B$ is a basis for $V$.
+
+Let $A\coloneqq [T]_B$.
+
+By \lemmacolor{\mref[lemma]{matInvarRepLemma}} $A$ is in the form:
+\[ A = \left(\begin{array}{c|c} M_K & \\\hline & M_I\end{array}\right) \]
+So $p_T(x)=p_A(x)=p_{M_K}(x)p_{I_K}(x)$
+
+We know that $\displaystyle p_{M_k}(x)=p_{T\mid_{K_\lambda}}(x)=(x-\lambda)^{\dim K_\lambda}$ by our previous lemma.
+
+This means that the multiplicity of $\lambda$ in $p_T(x)$ is at least $\dim K_\lambda$, so $\mu_\lambda\geq\dim K_\lambda$.
+
+But $p_{M_I}(\lambda)\neq0$ since if this were true, there would exist a \[ 0\neq v\in I_\lambda: Tv=\lambda v\implies v\in V_\lambda\implies v\in K_\lambda\implies v\in K_\lambda\cap I_\lambda\implies v=0 ~~\cont \]
+So this means the multiplicity of $\lambda$ in $p_T(x)$ is equal to the multiplicity of $\lambda$ in $p_{M_K}(x)=\dim K_\lambda ~~ \qed$
+
+\end{lemma}
+
+\begin{theorem}[specFracTheorem,Spectral Factorization Theorem]{$p_T(x)$ is fully factorizable $\iff \displaystyle\bigoplus_{\lambda\in\spec(T)} V_\lambda = V$}
+
+$p_T(x)$ is fully factorizable iff:
+\[ \sum_{\lambda\in\spec(T)}\mu_\lambda = \dim V \]
+By the previous lemma this is iff:
+\[ \sum_{\lambda\in\spec(T)}\dim K_\lambda = \dim V \]
+Since $\displaystyle\set{K_\lambda}_{\lambda\in\spec(T)}$ are disjoint subspaces:
+\[ \dim\bigoplus_{\lambda\in\spec(T)} K_\lambda = \sum_{\lambda\in\spec(T)}\dim K_\lambda \]
+So $p_T(x)$ is fully factorizable iff:
+\[ \dim\bigoplus_{\lambda\in\spec(T)} K_\lambda = \dim V \]
+\[ \iff \bigoplus_{\lambda\in\spec(T)} K_\lambda = V ~~ \qed \]
+
+\end{theorem}
+
+\newpage
+\subsection{Jordan Normal Form}
+
+\begin{definition*}
+
+A \defcolor{Jordan Block} is a matrix denoted as $J_n(\lambda)\in]bF^{n\times n}$ in the form:
+\[ J_n(\lambda) = \begin{pmatrix} \lambda & 1 & 0 & \cdots & 0\\ 0 & \lambda & 1 & \cdots & 0 \\ \vdots & \vdots & \ddots & \ddots & \vdots \\ 0 & 0 & \cdots & \lambda & 1 \\ 0 & 0 & \cdots & 0 & \lambda \end{pmatrix} \]
+Formally:
+\[ [J_n(\lambda)]_{ij} = \begin{cases} \lambda & i=j \\ 1 & i=j-1 \\ 0 & \text{else} \end{cases} \]
+
+\end{definition*}
+
+\begin{statement}{For any $n>1$, $J_n(\lambda)$ isn't diagonalizable}
+
+Notice that since $xI-J_n(\lambda)$ is an upper triangle matrix:
+\[ p_{J_n(\lambda)}(x) = \det(xI - J_n(\lambda)) = (x-\lambda)^n \]
+So its only eigenvalue is $\lambda$. But:
+\[ \nspace(\lambda I - J_n(\lambda)) = \nspace\begin{pmatrix} 0 & 1 & \dots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & \cdots & \cdots & 1 \\ 0 & \cdots & \cdots & 0 \end{pmatrix} \]
+Which has a dimension of $1$ (since its rank is $n-1$), which means that $\mu_\lambda\neq\gamma_\lambda\implies J_n(\lambda)$ isn't diagonalizable $\qed$ 
+
+\end{statement}
+
+\begin{lemma}[nilJordFormLemma]{Let $T$ be a nilpotent linear transformation and let $B\subseteq V$ be a basis. $[T]_B = \begin{pmatrix} J_{m_1}(0) & & \\ & \ddots & \\ & & J_{m_t}(0) \end{pmatrix} \iff$ there exists disjoint paths $\set{E_i}_{i=1}^t$ such that $B=\displaystyle\bigsqcup_{i=1}^t E_i$}
+
+$\underline{\implies}:$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Since $J_{m_i}(0)$ is a block of $[T]_B$, that means there exists a subset (in order) $E_i$ of $B$ such that $J_{m_i}(0)=[T_i]_{E_i}$ where $T_i\coloneqq T\mid_{E_i}$.
+
+Suppose $E_i=\tuple{v_1\dots v_{m_i}}$. This means that $Tv_1=0$ and $Tv_i=v_{i-1}\implies v_i=T^{n-i}v_n$. Let $v\coloneqq v_n$ So that means:
+\[ E_i = \tuple{T^{n-1}v\dots Tv, v} \]
+And since $T^nv=Tv_1=0$, this is a path (in other words, jordan matrices represent paths).
+
+These paths are disjoint because their union forms a basis.
+
+\end{minipage}
+
+$\underline{\impliedby}:$ \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Let $V_i\coloneqq\lspan(E_i)$. We know that $V_i$ is invariant under $T$. Let $T_i\coloneqq T\mid_{V_i}$. By using what we proved previously, $[T_i]_{E_i}=J_{m_i}(0)$ (where $m_i\coloneqq\abs{E_i}$).
+
+Since $B=\displaystyle\bigoplus_{i=1}^t E_i \implies [T]_B=\bigoplus_{i=1}^t [T_i]_{E_i} = \bigoplus_{i=1}^t J_{m_i}(0)$ as required.
+
+\end{minipage}
+
+$\qed$
+
+\end{lemma}
+
+\begin{definition}
+
+The \defcolor{degree of nilpotency} of a nilpotentic linear transformation $T$ is the minimum $k$ such that $T^k=0$.
+
+\end{definition}
+
+\begin{lemma}[maxPathLemma]{If $T$ is a nilpotentic linear transformation of degree $k$, its maximum path is of length $k$}
+
+It's obvious that all paths of $T$ are at most of length $k$, since $\forall v\in V: T^kv=0$ so the last (really the first) element in $v$'s path will be $T^iv$ for some $i<k$, so the path is of length $k$ or less.
+
+Assume for the sake of a contradiction that all paths have a length of strictly less than $k$. Let $E_v$ represent the path starting at $v$ (ie. $E_v=\tuple{T^mv\cdots Tv, v}$). This means that $\forall v\in V: \abs{E_v} < k \implies \forall v\in V \exists i<k: T^iv=0$ in contradiction with the fact that $k$ is $T$'s degree of nilpotency.
+
+\end{lemma}
+
+\begin{lemma}[pathBasisLemma]{Suppose $T$ is a nilpotentic linear transformation. Therefore there exists a basis which is a disjoint union of paths of $T$}
+
+Let $k$ be the degree of nilpotency of $T$.
+
+Remember that $\image T^2 \subseteq\image T$, and $\image T^k = \zspace$. So let's focus on the chains:
+\[ \zspace\subset\image T^{k-1} \subseteq\dots\subseteq\image T^2\subseteq\image T\subseteq V \]
+
+Notice that if $v\in\image T^{k-1}\implies\exists u\in V: T^{k-1}u=v\implies Tv=T^ku=0\implies v\in\ker T$. So $\image T^{k-1}\subseteq\ker T$. Which means $\image T^{k-1}\cap\ker T = \image T^{k-1}$.
+
+So if take the intersection of all these bases with $\ker T$, you get the following chain:
+\[ \zspace\subset\image T^{k-1}\subseteq\cdots\subseteq\ker T\cap\image T\subseteq\ker T \]
+
+Suppose $T^{k-1}v_1\dots T^{k-1}v_{r_1}$ forms a basis of $\image T^{k-1}$. Let this basis be $B_1$.
+
+We can extend this basis to a basis of $\ker T\cap\image T^{k-2}$, etc. recursively. Let:
+\[ B_i = B_{i-1} \cup \tuple{T^{k-i}v_{r_{i-1}+1}\dots T^{k-i}v_{r_i}} \]
+The extension of $B_i$ to a basis of $\ker T\cap\image T^{k-i}$.
+
+(Remember that $T^0=I$, so once we get to $B_k$, the extension is just vectors in the form $v$, not $Tv$)
+
+So $B_k$ is a basis of $\ker T$.
+
+Note that for every element in $B_k$, it is the end of a path. Suppose $T^{k-i}v_j\in B_k$, since it is also in $\ker T$, $T^{k-i+1}v_j=0$. So the tuple $\tuple{T^{k-i}v_j\dots  Tv_j, v_j}$ is a path. Let this path be $E_{v_j}$.
+
+Let's define:
+\[ B\coloneqq\bigsqcup_{v\in B_k} E_v \]
+The union of all theses paths. This is disjoint because the ends of these paths are all different, so the rest of the paths are different.
+
+We will now prove that $B$ is a basis.
+
+\begin{itemize}
+    \item Linear independence: Suppose there exists a zeroing linear combination of $B$. We can rewrite this zeroing linear combination as a sum of linear combinations of paths. So, suppose $v_i$ is an ordering of elements in $B_k$ (since it's a tuple). It is ordered in the way we defined it, so the vectors of $B_1$ come first, then $B_2\setminus B_1$, then $B_3\setminus B_2$ and so on. (The basis of $\image T^{k-1}$ comes first, then the remaining vectors in the basis of $\ker T\cap\image T^{k-2}$ and so on to $\ker T$).
+    
+    Let the $i$-th vector in $E_v$ be $T^{i-1}v$ (technically this reverses the order of $E_v$, but that's not important right now).
+    
+    So that means:
+    
+    \[ \sum_{i=1}^{r_k} \sum_{j=1}^{\displaystyle\abs{E_{v_i}}}\left(\alpha_{ij} T^{j-1}v_i\right) = 0 \]
+    
+    (Remember that the size of $B_i$ is $r_i$, so the size of $B_k$ is $r_k$)
+    
+    If we take $T^{k-1}$ of this sum, we get:
+    \[ \sum_{i=1}^{r_k} \sum_{j=1}^{\displaystyle\abs{E_{v_i}}}\left(\alpha_{ij} T^{k-2+j}v_i\right) = 0 \]
+    Notice that given $i>r_1$, the size of $E_{v_i}$ is less than $k$, so $T^{k-1}E_{v_i}=\zspace$. And since the degree of nilpotency of $T$ is $k-1$, so forall $j>1$, $T^{k-2+j}=0$. So this sum is equal to:
+    \[ \sum_{i=1}^{r_1} \left(\alpha_{i1} T^{k-1}v_i\right) = 0 \]
+    Since $\tuple{T^{k-1}v_1\dots T^{k-1}v_{r_1}}=B_1$ which is the basis of $\image T^{k-1}$, and is therefore linearly independent, so $\forall 1\leq i\leq r_1: \alpha_{i1}=0$
+    
+    If we take $T^{k-2}$, we get:
+    \[ \sum_{i=1}^{r_k} \sum_{j=1}^{\displaystyle\abs{E_{v_i}}}\left(\alpha_{ij} T^{k-3+j}v_i\right) = 0 \]
+    Forall $i>r_2$, $\abs{E_{v_2}} < k-1\implies T^{k-2}E_{v_2} =\zspace$. And $\forall j>2: T^{k-3+j}=0$, so:
+    \[ \sum_{i=1}^{r_2} \sum_{j=1}^2\left(\alpha_{ij} T^{k-3+j}v_i\right) = 0 \]
+    \[ \sum_{i=1}^{r_2} \left(\alpha_{i1}T^{k-2} + \alpha_{i2}T^{k-1}v_i\right) = 0 \]
+    Expanding this to two sums, we see:
+    \[ 0 = \sum_{i=1}^{r_2} \left(\alpha_{i1}T^{k-2}v_i\right) + \sum_{i=1}^{r_2} \left(\alpha_{i2}T^{k-1}v_i\right) = \sum_{i=r_1+1}^{r_2} \left(\alpha_{i1}T^{k-2}v_i\right) + \sum_{i=1}^{r_1} \left(\alpha_{i2}T^{k-1}v_i\right) \]
+    But this is a linear combination of $B_2$, so $\forall 1\leq i\leq r_1: \alpha_{i2}=0$ and $\forall 1\leq i\leq r_2: \alpha_{i1}=0$.
+    
+    If we continue to do this process inductively, we will keep getting zero spans of the $B_i$, so in the end, we get that $\forall i,j: \alpha_{ij}=0$, which means $B$ is linearly independent.
+    
+    \item Spanning: First, we will prove a statement to help us prove this.
+    
+    \begin{statement}{If $T^mv\in T^m(\lspan(B))\implies T^{m-1}v\in T^{m-1}(\lspan(B))$}
+    
+    This means there exists a $u\in\lspan(B)$ such that:
+    \[ T^mv=T^mu \implies T^mv-T^mu = 0 \implies T(T^{m-1}v-T^{m-1}u) = 0 \implies T^{m-1}v-T^{m-1}u\in\ker T \]
+    But at the same time:
+    \[ T^{m-1}v-T^{m-1}u\in\image T^{m-1} \implies T^{m-1}v-T^{m-1}u\in\ker T\cap\image T^{m-1} \]
+    This means that $T^{m-1}v-T^{m-1}u\in\lspan(B_{m-1})$, since $B_{m-1}$ is a basis of $\ker T\cap\image T^{m-1}$. These vectors have the form of $T^{m-1}w$ (some are $T^iw'$ for $i>m-1$, but that is still $T^{m-1}w$ for $w=T^{i+1-m}w'$). So suppose:
+    \[ T^{m-1}v-T^{m-1}u = \sum_{i=1}^{r_{m-1}} \alpha_i T^{m-1}v_i = T^{m-1} \sum_{i=1}^{r_{m-1}} \alpha_iv_i \]
+    Since the paths of $v_i$ are in $B$, that means that $v_i$ are also in $B$, so $\sum_{i=1}^{r_{m-1}} \alpha_iv_i\in\lspan(B)\implies T^{m-1}v-T^{m-1}u\in T^{m-1}(\lspan(B))$.
+    
+    So there exists a $w\in\lspan(B)$ where:
+    \[ T^{m-1}v-T^{m-1}u = T^{m-1}w \implies T^{m-1}v = T^{m-1}(u+w) \]
+    And since $u,w\in\lspan(B)\implies u+w\in\lspan(B)$, so
+    \[ T^{m-1}v\in T^{m-1}(\lspan(B)) ~~ \qed \]
+    
+    \end{statement}
+    
+    Suppose $v\in V$. Since $B_1=\tuple{T^{k-1}v_1\dots T^{k-1}v_{r_1}}=T^{k-1}\tuple{v_1\dots v_{r_1}}$ is a basis for $\image T^{k-1}$ therefore $\tuple{v_1\dots v_{r_1}}\subseteq B$, $T^{k-1}v\in T^{k-1}\lspan\tuple{v_1\dots v_{r_1}}\implies T^{k-1}v\in T^{k-1}\lspan(B)$.
+    
+    By our previous statement, that means that $T^{k-2}v\in T^{k-2}\lspan(B)$ and inductively: $\cdots\implies Tv\in T(\lspan(B))\implies v\in\lspan(B) ~~ \qed$
+
+\end{itemize}
+
+\end{lemma}   
+    
+\begin{lemma}{Let $E$ be a path of length $m$ and $\displaystyle T_0\coloneqq T\mid_{\lspan(E)}$, then:
+\[ \dim(\ker T_0\cap\image T_0^j)=\begin{cases} 0 & j\geq m \\ 1 & j < m \end{cases} \]}
+
+\textbf{If $j\geq m$}: Since $T_0^mv=0$ and remember that $E=\tuple{T_0^{m-1}v\cdots T_0v,v}$, so $T_0^j(\lspan(E))=\zspace$. Since $T_0$ is defined over $\lspan(E)$, this means that $\image T_0^j=\zspace\implies\ker T_0\cap\image T_0^j=\zspace\implies\dim(\ker T_0\cap\image T_0^j)=0$
+
+\textbf{Else if $j<m$}: Notice that since $T_0^{m-1}v\dots T_0v\in\image T_0\implies \dim\image T_0\geq m-1$. And by the rank-nullity theorem:
+\[ \dim\ker T_0 + \dim\image T_0 = \dim\lspan(E) = m \implies \dim\ker T_0 = m-\dim\image T_0 \leq 1 \]
+Which means that:
+\[ \dim(\ker T_0\cap \image T_0^j) \leq 1 \]
+But $T_0^{m-1}v\in\ker T_0\implies T_0^{m-1}v\in\ker T_0\cap\image T_0^j$ which means that the dimension is non-zero, so:
+\[ \dim(\ker T_0\cap \image T_0^j) = 1 ~~ \qed \]
+
+\end{lemma}
+
+\begin{lemma}{Let $T$ be a nilpotent linear transformation of degree $k$. The number of paths of length greater than $j$ (where $1\leq j\leq k$) in $B$, the basis which is a union paths of $T$, is equal to $\dim(\ker T\cap\image T^j)$}
+
+Forall paths $E_i$ in $B$, let $V_i\coloneqq\lspan(E_i)$. And let $T_i\coloneqq T\mid_{V_i}$.
+
+Since:
+\[ B = B_1\sqcup\dots\sqcup E_t \]
+That means:
+\[ V = V_1\oplus\dots\oplus V_t \]
+Which in turn means:
+\[ \image T^j = \image T^j_1 \oplus\dots\oplus\image T^j_t \]
+\[ \ker T = \ker T_1\oplus\dots\oplus\ker T_t \]
+Which means that:
+\[ \ker T\cap\image T^j = \bigoplus_{i=1}^t \ker T_i\cap\image T^j_i \implies \dim(\ker T\cap\image T^j) = \sum_{i=1}^t \dim(\ker T_i\cap\image T^j_i) \]
+By our previous lemma $\dim(\ker T_i\cap\image T^j_i)=1$ if $j<\abs{E_i}$, and $0$ otherwise, this must be equal to the number of paths of length greater than $j ~~ \qed$
+
+\end{lemma}
+
+\begin{corollary}{The number of paths of some length in two different bases of paths is the same}
+
+The number of paths of \textit{exactly} length $j$ is going to be the number of paths longer than $j$ minus the number of paths longer than $j-1$, so the number of paths of exactly length $j$ in $B$ is going to be:
+\[ \dim(\ker T\cap\image T^j) - \dim(\ker T\cap\image T^{j-1}) \]
+Which doesn't rely on which paths we choose for $B ~~ \qed$
+
+\end{corollary}
+
+\begin{definition}
+
+A \defcolor{Jordan Normal Form} of a linear transformation is a matrix representation in the form:
+\[ \begin{pmatrix} \fbox{$J_{m_1}(\lambda_1)$} & & \\ & \ddots & \\ & & \fbox{$J_{m_t}(\lambda_t)$} \end{pmatrix} \]
+(Similarly the Jordan Normal Form of a matrix is a matrix of the above form that is similar to the given matrix)
+
+\end{definition}
+
+\begin{theorem}[jordanNilFormThm,The Nilpotent Jordan Normal Form]{Suppose $T$ is a nilpotent linear transformation. $T$ has a Jordan Normal Form which is unique up to the order of its blocks}
+
+\begin{itemize}
+    \item Existence: We proved in a \lemmacolor{\mref*{previous lemma}{nilJordFormLemma}} that a nilpotent linear transformation has a Jordan Normal form iff there exists a basis which is a disjoint union of paths. In \lemmacolor{\mref[lemma]{pathBasisLemma}} we showed that any nilpotent matrix has a basis of paths. Together this means that every nilpotent linear transformation has a Jordan Normal Form.
+    
+    \item Uniqueness: Suppose $[T]_{B_1}$ and $[T]_{B_2}$ are both Jordan Normal Forms of $T$. $B_1$ and $B_2$ must both be disjoint unions of paths since block jordan matrices represent paths (as proven in a \lemmacolor{\mref*{previous lemma}{nilJordFormLemma}}). 
+    
+    The number of block jordan matrices in $[T]_{B_i}$ of some size $m$ is the number of paths of length $m$ in $B_i$. By our previous lemma, this number is doesn't depend on $B_i$. So the number of block jordan matrices of length $m$ in $[T]_{B_1}$ is equal to the number in $[T]_{B_2}$ meaning that their only difference is the order of the block jordan matrices in the Jordan Normal Form (as all of the block jordans have $0$s on their diagonal, so the only distinguishing trait of each block jordan is their size) $\qed$
+\end{itemize}
+
+\end{theorem}
+
+\newpage
+\begin{theorem}[jordanFormThm,The Extended Jordan Normal Form]{Suppose $T$ is a linear transformation. $T$ has a Jordan Normal Form iff $p_T(x)$ is fully factorizable}
+
+$\underline{\implies}$: \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+This is pretty trivial. Suppose $J$ is $T$'s jordan normal form, so $p_T(x)=p_J(x)$. Since $J$ is an upper triangle matrix, its characteristic polynomial is fully factorizable (product of elements on the diagonal).
+
+\end{minipage}
+
+$\underline{\impliedby}$: \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Suppose:
+\[ p_T(x) = (x-\lambda_1)\cdots(x-\lambda_t) \]
+
+We know by \theoremcolor{\mref[the]{specFracTheorem}} that there exists invariant subspaces $\set{K_{\lambda_i}}_{i=1}^t$ such that:
+\[ V = \bigoplus_{i=1}^t K_{\lambda_i} \]
+Let $T_i\coloneqq T\mid_{K_{\lambda_i}}$. We know by \lemmacolor{\mref[lemma]{invarCharPolyLemma}} that $p_{T_i}(x)=(x-\lambda_i)^{\mu(\lambda_i)}$.
+
+If we then define:
+\[ \widetilde{T}_i\coloneqq T_i-\lambda_i I \]
+$\widetilde{T}_i$ is nilpotent: $p_{\widetilde{T}}(x) = \det(xI-[T_i]_B+\lambda_iI) = \det((x+\lambda_i)I-[T_i]_B) = p_T(x+\lambda_i) = x^{\mu(\lambda_i)}$.
+
+So $\widetilde{T}_i$ has a unique (up to order) Jordan Normal Form. Suppose $B$ is a basis such that $[\widetilde{T}_i]_B$ is in jordan normal form, $J_1(0)\oplus\dots\oplus J_t(0)$. So:
+\[ [T_i-\lambda_iI]_B = J_1(0)\oplus\dots\oplus J_t(0) \implies [T_i]_{E_i} - \lambda_i[I]_{E_i} = J_1(0)\oplus\dots\oplus J_t(0) \]
+\[ \implies [T_i]_{B} = J_1(0)\oplus\dots\oplus J_t(0) + \lambda_iI = J_1(\lambda_i)\oplus\dots\oplus J_t(\lambda_i) \]
+Which is a jordan normal form.
+
+And this is unique up to order (otherwise, $\widetilde{T}_i$'s jordan normal form wouldn't be unique either). $\qed$
+
+\end{minipage}
+
+\end{theorem}
+
+Now might be a good time to stop and ponder why the hell we just went through all the trouble to prove something seemingly useless. I'll give you a spoiler: it's because it's not useless. You can use the Jordan Normal Form to prove if two matrices are similar or not, regardless of whether or not they're diagonalizable. And taking the power of a jordan normal form is much easier than that of another matrix (other than a diagonal matrix).
+
+\begin{theorem}{The following traits of the Jordan Normal Form are true:
+\begin{enumerate}
+    \item The number of block jordan matrices with $\lambda$ on their diagonal in $T$'s Jordan Normal Form is $\gamma_\lambda$.
+    \item The sum of the sizes of the $\lambda$ block jordans in the Jordan Normal Form is $\mu_\lambda$.
+    \item The size of the maximum $\lambda$ block jordan in the Jordan Normal Form is the multiplicity of $x-\lambda$ in $m_T(x)$.
+\end{enumerate}}
+
+Let $A_\lambda$ be the block of $\lambda$ block jordan matrices in the Jordan Normal Form, ie:
+ \[A_\lambda = \bigoplus_{i=1}^t J_{m_i}(\lambda) \]
+
+\begin{enumerate}
+    \item We need to prove here that $t=\gamma_\lambda$. Note that $A_\lambda$ is $[T_i]_B$ from our previous proof (where $i$ corresponds to $\lambda$ obviously). Since $A_\lambda$ is the representation of a reduced $T$ over $K_\lambda$ (as per our previous proof), $\gamma_{A_\lambda}(\lambda)=\gamma_\lambda$ since $V_\lambda\subseteq K_\lambda$.
+    
+    Also notice that $\gamma_{J_{m_i}}(\lambda)=1$, and $\gamma_{A_\lambda}=\sum_{i=1}^t \gamma_{J_{m_i}}(\lambda)$, which means:
+    \[ \gamma_\lambda = \sum_{i=1}^t 1 = t \]
+    
+    \item We know the size of $A_\lambda$ is $\dim K_\lambda=\mu_\lambda$. And the size of $A_\lambda$ is the sum of the sizes of all $\lambda$ jordan blocks (since $A_\lambda$ is their direct sum).
+    
+    \item Notice that since $A_\lambda$ is a direct sum of jordan blocks, which have a minimal polynomial of $(x-\lambda)^{m_i}$, the minimal polynomial of $A_\lambda$ will be $(x-\lambda)^{m_\lambda}$ where $m_\lambda$ is the maximum $m_i$, so the maximum size of the jordan block.
+    
+    Since all of the $A_\lambda$s have different roots to their minimal polynomial, the minimal polynomial of $T$ will be:
+    \[ m_T(x) = \prod_{\lambda\in\spec(T)} m_{A_\lambda}(x) = \prod_{\lambda\in\spec(T)} (x-\lambda)^{m_\lambda} \]
+\end{enumerate}
+
+$\qed$
+
+\end{theorem}
+
+\begin{theorem}{$T$ is diagonalizable $\iff m_T(x)$ fully factorizes and the multiplicity of each factor is $1$, ie. $m_T(x)=\displaystyle\prod_{\lambda\in\spec(T)}(x-\lambda)$}
+
+$T$ is diagonalizable iff there exists a basis such that $[T]_B$ is a diagonal matrix, but a diagonal matrix is a Jordan Normal Form (the blocks are of size $1$), so this is iff the maximum multiplicity of $\lambda$ for each $\lambda\in\spec(T)$ in $m_T(x)$ is at most $1$, while at the same time it must be greater or equal to $1$, so this is iff $\forall\lambda\in\spec(T)$ the multiplicity of $\lambda$ in $m_T(x)$ is $1 ~~ \qed$
+
+\end{theorem}
+
+\newpage
+\section{Inner Product Spaces}
+
+\subsection{The Inner Product}
+
+In this section, we must reduce our generalizations. So we will only be discussing the real and complex fields. So $\bF=\bR$ or $\bF=\bC$ in this section.
+
+\begin{definition*}
+
+If $V$ is a vector space over $\bF$ equipped with a function:
+\[ \iprod{~,~} : V\times V\longrightarrow\bF \]
+That satisfies the following properties:
+
+$\alpha,\beta\in\bF$ and $v,u,w\in V$
+\begin{enumerate}
+    \item $\iprod{\alpha v+\beta u, w} = \alpha\iprod{v,w}+\beta\iprod{u,w}$
+    \item $\iprod{v,\alpha u+\beta w} = \overline{\alpha}\iprod{v,u}+\overline{\beta}\iprod{v,w}$ where $\overline{\alpha}$ is the complex conjugate
+    \item $\iprod{v,u}=\overline{\iprod{u,v}}$
+    \item $0\leq\iprod{v,v}\in\bR$
+    \item $\iprod{v,v}=0\iff v=0$
+\end{enumerate}
+
+$\iprod{~,~}$ is called the \defcolor{inner product} and $V$ is called the \defcolor{inner product space}.
+
+The first and second criteria mean the inner product is \textit{sesquilinear} ($1\dfrac{1}{2}$ linearity), the third criteria means it is \textit{hermitian}, and the fourth and fifth means its \textit{positive} (technically non-negative), 
+
+\end{definition*}
+
+\begin{statement}{The extended dot product over $\bF^n$ defined like so: $\iprod{v,u}=v^T\overline{u}$ is an inner product}
+
+Suppose 
+\[ v=\begin{pmatrix} \alpha_1\\\vdots\\\alpha_n\end{pmatrix} \]
+\[ u =\begin{pmatrix} \beta_1\\\vdots\\\beta_n\end{pmatrix} \]
+\[ w=\begin{pmatrix} \gamma_1\\\vdots\\\gamma_n\end{pmatrix} \]
+\[ \implies \iprod{v,u} = \sum_{i=1}^n \alpha_i\overline{\beta_i} \]
+
+\begin{enumerate}
+    \item 
+    \[ \iprod{\delta v + \varepsilon u, w} = \sum_{i=1}^n (\delta\alpha_i + \varepsilon\beta_i)\overline{\gamma_i} = \delta\sum_{i=1}^n \alpha_i\overline{\gamma_i} + \varepsilon\sum_{i=1}^n \beta_i\overline{\gamma_i} = \delta\iprod{v,w} + \varepsilon\iprod{u,w} \]
+    Which satisfies the first criteria.
+    
+    \item \[ \iprod{v, \delta u + \varepsilon w} = \sum_{i=1}^n\alpha_i\left(\overline{\delta\beta_i+\varepsilon\gamma_i}\right) = \sum_{i=1}^n\alpha_i\left(\overline{\delta\beta_i}\right) + \sum_{i=1}^n\alpha_i\left(\overline{\varepsilon\gamma_i}\right) = \overline{\delta}\sum_{i=1}^n\alpha_i\overline{\beta_i} + \overline{\varepsilon}\sum_{i=1}^n\alpha_i\overline{\gamma_i} = \]
+    \[ = \overline{\delta}\iprod{v,u}+\overline{\varepsilon}\iprod{v,w} \]
+    Which satisfies the second criteria.
+    
+    \item \[ \overline{\iprod{u,v}} = \overline{\sum_{i=1}^n\beta_i\overline{\alpha_i}} = \sum_{i=1}^n\overline{\beta_i\overline{\alpha_i}} = \sum_{i=1}^n\overline{\beta_i}\overline{\overline{\alpha_i}} = \sum_{i=1}^n\alpha_i\overline{\beta_i} = \iprod{v,u} \]
+    Which satisfies the third criteria
+    
+    \item \[ \iprod{v,v} = \sum_{i=1}^n\alpha_i\overline{\alpha_i} = \sum_{i=1}^n\abs{\alpha_i} \]
+    Since the magnitude of $\alpha_i$ non-negative, ie. $\abs{\alpha_i}\geq0$, that means $\displaystyle\sum_{i=1}^n\abs{\alpha_i}\geq0$. Which satisfies the fourth criteria
+    
+    \item Since $\iprod{v,v}$ is a sum of non-negative values, it equals $0$ if and only if all of those values are $0$, so iff $\abs{\alpha_i}=0\iff\alpha_i=0\iff v=0$, which satisfies the fifth criteria
+\end{enumerate}
+
+So all of the criteria are satisfied, which means the standard dot product is an inner product.
+
+\end{statement}
+
+\begin{note}
+
+Notice that if $\bF=\bR$ then $\overline{v}=v$, so the standard dot product over $\bR$ is the dot product you'd learn in highschool, ie:
+\[ \begin{pmatrix} \alpha_1\\\vdots\\\alpha_n \end{pmatrix} \cdot \begin{pmatrix} \beta_1\\\vdots\\\beta_n \end{pmatrix} = \sum_{i=1}^n\alpha_i\beta_i \]
+Is an inner product over $\bR^n$
+
+\end{note}
+
+\begin{definition}
+
+We define the \defcolor{norm} of a vector to be a function:
+\[ \norm{~} : V\longrightarrow\bF \]
+That satisfies the following the following criteria:
+\begin{enumerate}
+    \item Positiveness: $0\leq\norm{v}\in\bR$ and $\norm{v}=0\iff v=0$
+    \item Homogeneity: $\norm{\alpha v}=\abs{\alpha}\cdot\norm{v}$
+    \item The Triangular Inequality: $\norm{v+u}\leq\norm{v}+\norm{u}$
+\end{enumerate}
+
+The purposes of the norm is to represent the "length" or "magnitude" of a vector.
+
+A vector space equipped with a norm is called a \defcolor{normed vector space}.
+
+\end{definition}
+
+\begin{note}
+
+We will only be focusing on one kind of norm right now, the \defcolor{inner product norm}, where:
+\[ \norm{v}\coloneqq\sqrt{\iprod{v,v}} \]
+This comes from the geometric definition of the inner/dot product.
+
+The proof that this is a norm (ie. it satisfies all criteria) is not trivial, so our next step is to prove that it is indeed a norm.
+
+\end{note}
+
+\begin{definition}
+
+Two vectors $v$ and $u$ are called \defcolor{orthogonal} if: $\iprod{v,u}=0$. This is denoted as $v\perp u$ (notice that since the inner product is hermitian, $\iprod{v,u}=0\iff\iprod{u,v}=0$, so orthogonality is symmetric)
+
+\end{definition}
+
+\newpage
+\begin{lemma*}{The following are characteristics of orthogonality:
+\begin{itemize}
+    \item $\iprod{v,0}=0$
+    \item $v\perp u\iff u\perp v$
+    \item $v\perp u\implies \alpha v\perp\beta u$
+\end{itemize}}
+
+\begin{itemize}
+    \item \[ \iprod{v,0} = \iprod{v,0\cdot v} = \overline{0}\iprod{v,v} = 0\iprod{v,v} = 0 \]
+    \item Suppose $v\perp u\implies\iprod{v,u}=0$. So $\iprod{u,v}=\overline{\iprod{v,u}}=\overline{0}=0$ which means that $u\perp v$ (this also proves the other direction. This is because you can switch the names of $u$ and $v$)
+    \item \[ \iprod{\alpha v,\beta u} = \alpha\cdot\overline{\beta}\iprod{v,u}=\alpha\cdot\overline{\beta}\cdot0=0 \implies \alpha v\perp\beta u \]
+\end{itemize} 
+
+$\qed$
+
+\end{lemma*}
+
+\begin{lemma}[pythagLemma]{$v\perp u\implies \norm{v+u}^2=\norm{v}^2+\norm{u}^2$}
+
+Since $v\perp u\implies\iprod{v,u}=\iprod{u,v}=0$
+
+\[ \norm{v+u}^2 = \iprod{v+u,v+u} = \iprod{v,v}+\iprod{v,u}+\iprod{u,v}+\iprod{u,u} = \iprod{v,v}+\iprod{u,u} = \norm{v}^2+\norm{u}^2 ~~ \qed \]
+
+\end{lemma}
+
+\begin{lemma}[normFirstCriteriaLemma]{$0\geq\norm{v}\in\bR$ and $\norm{\alpha v}=\abs{\alpha}\norm{v}$}
+    
+\begin{enumerate}
+    \item 
+    \[ \norm{v}=\sqrt{\iprod{v,v}}\]
+    which by the criteria for the inner product is a non-negative real number
+    
+    \item  
+    \[ \norm{\alpha v} = \sqrt{\iprod{\alpha v, \alpha, v}} = \sqrt{\alpha\overline{\alpha}\iprod{v,v}}=\sqrt{\abs{\alpha}^2\iprod{v,v}} = \abs{\alpha}\sqrt{\iprod{v,v}}=\abs{\alpha}\norm{v} \]
+\end{enumerate}
+
+$\qed$
+
+\end{lemma}
+
+\begin{lemma}[cbsIneqLemma,Cauchy-Bunyakovsky-Schwarz Inequality]{\begin{enumerate}
+    \item $\abs{\iprod{v,u}}\leq\norm{v}\cdot\norm{u}$
+    \item $\abs{\iprod{v,u}}=\norm{v}\cdot\norm{u}\iff\set{v,u}$ is linearly dependent
+\end{enumerate}}
+
+\begin{enumerate}
+    \item \textbf{If $u=0$}: 
+    \[ \iprod{v,u} = \abs{\iprod{v,0}} = 0 \]
+    \[ \norm{v}\cdot\norm{u}=\norm{v}\cdot0=0 \]
+    So $\abs{\iprod{v,u}}=\norm{v}\cdot\norm{u}$ and $\set{v,u}=\set{v,0}$ which is linearly dependent, so the lemma holds.
+     
+    \textbf{Else $u\neq0$} Let:
+    \[ z\coloneqq v-\dfrac{\iprod{v,u}}{\iprod{u,u}}u \]
+    Notice:
+    \[ \iprod{z,u} = \iprod{v-\dfrac{\iprod{v,u}}{\iprod{u,u}}u, u} = \iprod{v,u} - \dfrac{\iprod{v,u}}{\iprod{u,u}}\iprod{u,u} = \iprod{v,u}-\iprod{v,u} = 0 \]
+    So $z\perp u$, which means that $z\perp\dfrac{\iprod{v,u}}{\iprod{u,u}}u$ so by \lemmacolor{\mref[lemma]{pythagLemma}}:
+    \[ \norm{v}^2 = \norm{z+\dfrac{\iprod{v,u}}{\iprod{u,u}}u}^2 = \norm{z}^2 + \norm{\dfrac{\iprod{v,u}}{\iprod{u,u}}u}^2 = \norm{z}^2 + \left(\dfrac{\iprod{v,u}}{\iprod{u,u}}\right)^2\norm{u}^2 = \]
+    \[ = \norm{z}^2 + \left(\dfrac{\iprod{v,u}}{\norm{u}}\right)^2 \]
+    \[ \implies \iprod{v,u}^2 = \norm{v}^2\norm{u}^2 - \norm{z}^2\norm{u}^2 \]
+    Since $-\norm{z}^2\norm{u}^2\leq0$ which means that:
+    \[ \iprod{v,u}^2 \leq \norm{v}^2\norm{u}^2 \implies \abs{\iprod{v,u}}\leq \norm{v}\cdot\norm{u} \]
+    Which satisfies the first part of the lemma
+    
+    \item We saw that if $u=0$, the lemma is satsified. So we now must prove the second part of the lemma for $u\neq 0$. So we need to prove that $\abs{\iprod{v,u}}=\norm{v}\cdot\norm{u}\iff\set{v,u}$ is linearly dependent:
+    
+    $\underline{\implies}$: \begin{minipage}[t]{\dimexpr\textwidth-3cm}
+    
+    \[ \abs{\iprod{v,u}}=\norm{v}\cdot\norm{u} \implies \iprod{v,u}^2=\norm{v}^2\norm{u}^2 \implies \norm{z}^2\norm{u}^2=0 \]
+    Since $u\neq0\implies\norm{u}\neq0$ so $\norm{z}=0\implies z=0$. So:
+    \[ v-\dfrac{\iprod{v,u}}{\iprod{u,u}}u = 0 \implies v = \dfrac{\iprod{v,u}}{\iprod{u,u}}u \]
+    So $\set{v,u}$ is linearly dependent
+    
+    \end{minipage}
+    
+    $\underline{\impliedby}$: \begin{minipage}[t]{\dimexpr\textwidth-3cm}
+    
+    Since $\set{v,u}$ is linearly dependent, $v=\alpha u$. So:
+    \[ \abs{\iprod{v,u}} = \abs{\iprod{\alpha u, u}} = \abs{\alpha}\abs{\iprod{u,u}} = \abs{\alpha}\norm{u}^2 \]
+    And $\norm{v}\cdot\norm{u}=\norm{\alpha u}\cdot\norm{u}=\abs{\alpha}\norm{u}\cdot\norm{u}=\abs{\alpha}\norm{u}^2=\abs{\iprod{v,u}}$ which satisfies the lemma.
+    
+    \end{minipage}
+    
+\end{enumerate}
+
+$\qed$
+
+\end{lemma}
+
+\begin{theorem}{The inner product norm is a norm function}
+
+We saw in \lemmacolor{\mref[lemma]{normFirstCriteriaLemma}} that the inner product norm satisfies the first two criteria.
+
+Let's now check the third criterion:
+\[ \norm{v+u} = \sqrt{\iprod{v+u,v+u}} = \sqrt{\iprod{v,v}+\iprod{v,u}+\iprod{u,v}+\iprod{u,u}} = \sqrt{\norm{v}^2 + \iprod{v,u}+\iprod{u,v} + \norm{u}^2} \]
+Since $\iprod{u,v}=\overline{\iprod{v,u}}\implies \iprod{v,u}+\iprod{u,v} = 2\Re(\iprod{v,u})$
+
+We know that $\Re(z)\leq\abs{z}$ so $2\Re(\iprod{v,u})\leq2\abs{\iprod{v,u}}$, and by \lemmacolor{\mref[the]{cbsIneqLemma}}, we know that $2\abs{\iprod{v,u}}\leq2\norm{v}\cdot\norm{u}$, so $\iprod{v,u}+\iprod{u,v}\leq2\norm{v}\cdot\norm{u}$, which means:
+\[ \norm{v+u} \leq \sqrt{\norm{v}^2+2\norm{v}\norm{u}+\norm{u}^2} = \norm{v}+\norm{u} ~~ \qed \]
+
+\end{theorem}
+
+\newpage
+\subsection{Orthogonality}
+
+\begin{definition*}
+
+Given a set $B=\tuple{v_1\dots v_n}$, we define the \defcolor{Gram Matrix}, denoted \defcolor{$G_B$} to be a matrix where:
+\[ [G_B]_{ij} = \iprod{v_i,v_j} \]
+So:
+\[ G_B = \begin{pmatrix} 
+\iprod{v_1,v_1} & \iprod{v_1,v_2} & \cdots & \iprod{v_1,v_n} \\ 
+\iprod{v_2,v_1} & \iprod{v_2,v_2} & \cdots & \iprod{v_2,v_n} \\
+\vdots & \vdots & \ddots & \vdots \\
+\iprod{v_n,v_1} & \iprod{v_n,v_2} & \cdots & \iprod{v_n,v_n} \\
+\end{pmatrix} \]
+
+\end{definition*}
+
+\begin{statement}{If $B$ is a basis, $\iprod{u,w}=[u]_B^TG_B\overline{[w]_B}$}
+
+Suppose $B=\tuple{v_1\dots v_n}$, and $u,w\in V$ such that $u=\alpha_1 v_1+\dots+\alpha_n v_n$ and $w=\beta_1 v_1+\dots+\beta_n v_n$. So:
+\[ \iprod{u,w} = \iprod{\sum_{i=1}^n \alpha_i v_i, \sum_{j=1}^n \beta_j v_j} = \sum_{i=1}^n\alpha_i\cdot\sum_{j=1}^n\left(\overline{\beta_j}\cdot\iprod{v_i,v_j}\right) = \sum_{i=1}^n\sum_{j=1}^n\alpha_i\overline{\beta_j}\iprod{v_i,v_j} \]
+Since $[u]_B^T\in\bF^{1\times n}, G_B\in\bF^{n\times n}, \overline{[w]_B}\in\bF^{n\times 1}$, this means that $[u]_B^TG_B\overline{[w]_B}\in\bF^{1\times1}$, so it's a scalar. Which means we can simplify calculations by calculating directly:
+\[ [u]_B^TG_B\overline{[w]_B} = \sum_{i=1}^n\alpha_i\cdot[G_B\overline{[w]_B}]_{i1} = \sum_{i=1}^n\alpha_i\cdot\sum_{j=1}^n[G_B]_{ij}\overline{\beta_j} = \sum_{i=1}^n\sum_{j=1}^n\alpha_i\overline{\beta_j}\iprod{v_i,v_j} \]
+So $\iprod{u,w}=[u]_B^TG_B\overline{[w]_B} ~~ \qed$ (While technically I'm equating a matrix and a scalar, the matrix is a $1\times1$ matrix, so the equation is fine)
+
+\end{statement}
+
+\begin{theorem*}{$B$ is linearly independent $\iff G_B$ is invertible}
+
+$\underline{\implies}$: \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+We will prove that $G_B$'s columns are linearly independent. Suppose there exist $\alpha_1\dots\alpha_n$ such that:
+\[ \sum_{i=1}^n\alpha_i\cdot C_i(G_B) = 0 \]
+This means that (since $\displaystyle\sum_{i=1}^n\alpha_i\cdot C_i(G_B)$ is a column vector. Remember that $[v]_t$ is the $t$-th element in the column/row vector $v$):
+\[ \forall 1\leq j\leq n: [\sum_{i=1}^n\alpha_i\cdot C_i(G_B)]_j = 0 \implies \sum_{i=1}^n\alpha_i\iprod{v_j,v_i} = 0 \implies \iprod{v_j,\sum_{i=1}^n\overline{\alpha_i}v_i} = 0 \]
+Let $u\coloneqq\displaystyle\sum_{i=1}^n\overline{\alpha_i}v_i$. So $\forall1\leq n: \iprod{u,v_i}$. Notice that:
+\[ \iprod{u,u} = \iprod{u,\sum_{i=1}^n\overline{\alpha_i}v_i} = \sum_{i=1}^n\alpha_i\iprod{u,v_i} = \sum_{i=1}^n0 = 0 \]
+Which means that $u=0$.
+
+So $\alpha_1 v_1+\dots\alpha_n v_n=0$, since $v_1\dots v_n$ are linearly independent, this means that $\alpha_1=\dots=\alpha_n=0$. So the columns of $G_B$ are linearly independent, which means that $G_B$ is invertible.
+
+\end{minipage}
+
+\medskip
+
+$\underline{\impliedby}$: \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Suppose that there exists $\alpha_i$s such that:
+\[ \sum_{i=1}^n\alpha_i v_i = 0 \]
+Now notice that given some $j$:
+\[ [\sum_{i=1}^n\alpha_i C_i(G_B)]_j = \sum_{i=1}^n\alpha_i \iprod{v_j,v_i} = \iprod{v_j,\sum_{i=1}\alpha_i v_i} = \iprod{v_j,0} = 0 \]
+So that means that:
+\[ \sum_{i=1}^n\alpha_i C_i(G_B) = 0 \]
+But since $G_B$ is invertible and thus its columns are linearly independent, this means that $\alpha_i=0$. 
+
+So $B$ is linearly independent.
+
+\end{minipage}
+
+$\qed$
+
+\end{theorem*}
+
+\begin{definition}
+
+\begin{itemize}
+    \item $S\subset V$ is an \defcolor{orthogonal set} if $\forall v\neq u\in S: v\perp u$
+    \item $S\subset V$ is an \defcolor{orthonormal set} if $S$ is orthogonal and $\forall v\in S: \norm{v}=1$
+    \item $S\subset V$ is a \defcolor{non-trivial orthogonal set} if $S$ is orthogonal and $0\notin S$
+    \item $S\subset V$ is an \defcolor{orthogonal basis} if $S$ is orthogonal and a basis of $V$
+    \item $S\subset V$ is an \defcolor{orthonormal basis} if $S$ is orthonormal and a basis of $V$
+\end{itemize}
+
+(Notice that $\norm{0}=0\neq1$, so any orthonormal set is a non-trivial orthogonal set.)
+
+\end{definition}
+
+\begin{corollary}{Any non-trivial orthogonal set is linearly independent}
+
+Suppose $S=\tuple{v_1\dots v_n}$ is a non-trivial orthogonal set (ignore the fact that its quite obviously a tuple: the difference between sets and tuples is almost non-existent sometimes in linear algebra.)
+
+So $[G_S]_{ii}=\iprod{v_i,v_i}$, since $v_i\neq0$ this means $\iprod{v_i,v_i}\neq0$, so the diagonal of $G_S$ is non-zero.
+
+And for $i\neq j$, notice that $[G_S]_{ij}=\iprod{v_i,v_j}=0$ since $v_i, v_j$ are orthogonal. So $G_S$ is a diagonal matrix whose diagonal is non-zero, so $G_S$ is invertible, which means $S$ is linearly independent.
+
+\end{corollary}
+
+\begin{lemma}{Suppose $E=\tuple{e_1\dots e_n}$ is an orthonormal basis. Let $v\in V$, suppose $v=\begin{pmatrix}\alpha_1\\\vdots\\\alpha_n\end{pmatrix}$, then:
+\begin{enumerate}
+    \item $\alpha_i=\iprod{v,e_i}$
+    \item $\norm{v}^2=\sum_{i=1}^n\abs{\alpha_i}^2$ (Extended Pythagorean Theorem)
+\end{enumerate}}
+
+\begin{enumerate}
+    \item 
+    \[ v=\sum_{i=1}^n\alpha_ie_i \]
+    So:
+    \[ \iprod{v,e_i}=\iprod{\sum_{j=1}^n\alpha_je_j,e_i}=\sum_{j=1}^n\alpha_j\iprod{e_j,e_i} \]
+    Since $E$ is orthogonal, $\iprod{e_j,e_i}=0$ when $j\neq i$ and $1$ when $j=i$, so 
+    \[ =\alpha_i\iprod{e_i,e_i}\alpha_i \]
+    \item 
+    \[ \norm{v}^2 = \iprod{v,v} = \iprod{\sum_{i=1}^n\alpha_ie_i,\sum_{j=1}^ne_j} = \sum_{i=1}^n\sum_{j=1}^n\alpha_i\overline{\alpha_j}\iprod{e_i,e_j} \]
+    For the same reasoning, this is equal to:
+    \[ \sum_{i=1}^n\alpha_i\overline{\alpha_i} = \sum_{i=1}^n\abs{\alpha_i}^2 \]
+\end{enumerate}
+
+$\qed$
+
+\end{lemma}
+
+\begin{definition}
+
+Suppose $0\neq v\in V$, the \defcolor{normed form of the vector $v$} (this is a bit of a mouthfull, so I'll just call it $v$-normed) is defined to be:
+ \[ \hat{v}\coloneqq\dfrac{1}{\norm{v}}v \]
+
+(Obviously this has a norm of $1$)
+\end{definition}
+
+\begin{theorem}[gramSchmidtThm,Gram-Schmidt Theorem]{Every inner product space $V$ has an orthonormal basis}
+
+We only need to find an orthogonal basis, as we can then norm the basis and that will be orthonormal.
+
+The idea is to do this recursively, given a set of orthogonal vectors, we find a vector that's orthogonal to all of them. The way to do this allows us to analyze some more characteristics of the inner product in the future. Remember that geometrically, to find the normal to a plane (equivalent here to finding an orthogonal vector to a subspace) we could take some vector not on the plane, and project it onto the plane. Say $v$ is the vector and $\tilde{v}$ is its projection. Since $v=\tilde{v}+n$, where $n$ is a normal vector to the plane, $v-\tilde{v}$ gives us our desired normal vector. (It's not important we prove this, because we're proving this for a more general situation. This geometric example is something that should've been proven in high school, but it really doesn't matter.)
+
+So the idea is that we work backwards: we find $\tilde{v}$ and from that we find $n$. Since we know that $\tilde{v}$ is in the plane (which is the span of all prior normal vectors found as this is a recursive algorithm), it is a linear combination of some known vectors. So we just need to find the proper linear combination and we have our desired vector.
+
+Afterwards, we just need to verify that the vectors form a basis, and then we have an orthogonal basis.
+
+If you don't understand this explanation, that's fine. You can understand the proof without understanding the intuition behind it.
+
+Suppose $B=\tuple{v_1\dots v_n}$ is some basis of $V$, our goal is to construct from this an orthogonal basis.
+
+Let $E=\tuple{w_1\dots w_n}$ be constructed as follows:
+\[ w_1\coloneqq v_1 \]
+\[ w_n \coloneqq v_n - \sum_{i=1}^{n-1}\alpha_{in}w_i \]
+
+So every vector is $v_n$ minus some linear combination of all prior vectors in $E$. This is where the intuition above comes in. We want to find the linear combination of $w_1\dots w_{n-1}$ that gives the projection of $w_n$ onto $\lspan{w_1\dots w_{n-1}}$, and from that we find the normal (orthogonal vector) to the subspace. So we need to find the $\alpha$s that make $E$ an orthogonal basis still, though. Intuition only goes so far.
+
+Let's begin with finding the $\alpha$s that make this orthogonal.
+
+We want $\forall i<n: \iprod{w_n,w_i} = 0$. If we assume that $\forall m<n$ this holds (ie. $\forall m<n \forall i<m: w_m\perp w_i$), which we can do as we are building this recursively we see:
+\[ \iprod{w_n, w_i} = \iprod{v_n-\sum_{t=1}^{n-1}\alpha_{tn}w_t, w_i} = \iprod{v_n, w_i} - \sum_{t=1}^{n-1}\alpha_{tn}\iprod{w_t, w_i} \]
+By our assumption, $\forall t\neq i: \iprod{w_t,w_i}=0$, so this equals:
+\[ = \iprod{v_n,w_i} - \alpha_{in}\iprod{w_i,w_i} \]
+Since we want this to be $0$, this is iff:
+\[ \iprod{v_n,w_i} = \alpha_{in}\iprod{w_i,w_i} \iff \alpha_{in} = \dfrac{\iprod{v_n,w_i}}{\iprod{w_i,w_i}} \]
+So $\forall i<n$ we have found $\alpha_{in}$, and this is all the $\alpha$s we need to find (as when $i\geq n$, $\alpha_{in}$ isn't used anywhere).
+
+So we have found an orthogonal set with $n$ elements. We just need to finish and prove that it's a basis. We will prove that it spans $V$, and since there are $n$ elements, it must be a basis.
+
+\begin{statement}{$\forall 1\leq k\leq n: \lspan\set{v_1\dots v_k}=\lspan\set{w_1\dots w_k}$}
+
+We will prove this by induction on $k$.
+
+\textbf{Base case}: $k=1$, in this case $w_1=v_1$, so their spans are obviously the same
+
+\textbf{Inductive step}: Assume $P(k-1)$. We know:
+\[ w_k = v_k - \gamma_1 w_1-\dots-\gamma_{k-1}w_{k-1} \]
+For some $\gamma$s, which means that $v_k\in\lspan\set{w_1\dots w_k}$. On the flip side, $w_k\in\lspan\set{v_k,w_1\dots w_{k-1}}=\lspan\set{v_1\dots v_k}$
+
+Suppose $v\in\lspan\set{v_1\dots v_k}$ this means:
+\[ v=\alpha_1 v_1+\dots+\alpha_k v_k \]
+Since $\alpha_1v_1+\dots+\alpha_{k-1}v_{k-1}\in\lspan\set{v_1\dots v_{k-1}}=\lspan\set{w_1\dots w_{k-1}}$, and $v_k\in\lspan\set{w_1\dots w_k}$, so $v\in\lspan\set{w_1\dots w_k}$
+
+Suppose $v\in\lspan\set{w_1\dots w_k}$, since $\lspan\set{w_1\dots w_{k-1}}=\lspan\set{v_1\dots v_{k-1}}$ and $w_k\in\lspan\set{v_1\dots v_k}$, that means $v\in\lspan\set{v_1\dots v_k}$.
+
+So $\lspan\set{v_1\dots v_k}=\lspan{w_1\dots w_k} ~~ \qed$
+
+\end{statement}
+
+This means that when $k=n$, $\lspan(E)=\lspan(B)=V$, so $E$ spans and therefore is an orthogonal basis. So its norm is an orthonormal basis.
+
+\end{theorem}
+
+\begin{definition}
+
+Given a set $S\subseteq V$ we define $S$'s \defcolor{orthogonal complement} to be:
+\[ W^\perp = \set{v\in V~\middle|~ \forall w\in S: v\perp w} \]
+
+\end{definition}
+
+\begin{lemma}{$S^\perp$ is a subspace}
+
+\begin{itemize}
+    \item $0\in S^\perp$: since $\forall v\in S: \iprod{0,v}=0\implies0\perp v\implies0\in S^\perp$
+    \item Suppose $v,u\in S$, $\alpha\in\bF$, $v+\alpha u\in S^\perp$: Let $w\in S$, we need to show $v+\alpha u\perp w$. 
+    \[ \iprod{v+\alpha u,w} = \iprod{v,w} + \alpha\iprod{u,w} = 0 \]
+    So $v+\alpha u\in S^\perp$
+\end{itemize}
+
+$\qed$
+
+\end{lemma}
+
+\newpage
+\begin{lemma}{$S^\perp = \lspan(S)^\perp$}
+
+Suppose $S=\set{v_1\dots v_k}$
+
+$\underline{\subseteq}$: \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Let $v\in S^\perp$, we need to prove that $v\in\lspan(S)^\perp$, so that $\forall u\in\lspan(S):v\perp u$. We know that $\forall i: \iprod{v_i,v}=0$.
+
+Let $u\in\lspan(S)$. Suppose $\displaystyle u=\sum_{i=1}^k\alpha_iv_i$, so:
+\[ \iprod{u, v} = \iprod{\sum_{i=1}^k\alpha_iv_i, v} = \sum_{i=1}^k\iprod{v_i,v} = 0 \]
+So $\forall u\in\lspan(S): v\perp u$, so $v\in\lspan(S)^\perp$
+
+\end{minipage}
+
+$\underline{\supseteq}$: \begin{minipage}[t]{\dimexpr\textwidth-2cm}
+
+Let $u\in\lspan(S)^\perp$. Since $\forall v\in S$, $v\in\lspan(S)\implies v\perp u$, so $u\in S^\perp$
+
+\end{minipage}
+
+\[ \implies S^\perp = \lspan(S)^\perp ~~ \qed \]
+
+\end{lemma}
+
+\begin{lemma}{Given a non-trivial orthogonal set $B_0$ it can be extended to an orthogonal basis $B$}
+
+Suppose $B_0=\tuple{v_1\dots v_k}$. We can extend this to a basis $B'=\tuple{v_1\dots v_k,v_{k+1}\dots v_n}$. If we execute the process in \theoremcolor{\mref[the]{gramSchmidtThm}} on $\tuple{v_{k+1}\dots v_n}$ we get a non-trivial orthogonal set that spans the same subspace (ie. it is also a basis), let that be $B_0'$, so if we let $B=B_0\cup B_0'$, $B$ is a basis (as the process doesn't change the span) $\qed$
+
+\end{lemma}
+
+\begin{theorem}[orthSpaceSumThm]{Given any subspace $W$, $V=W\oplus W^\perp$}
+
+\begin{itemize}
+    \item $W\cap W^\perp=\zspace$: Suppose $v\in W\cap W^\perp$. Since $v\in W^\perp$, it is perpendicular to all vectors in $W$, including itself. So $\iprod{v,v}=0\implies v=0$
+    \item Suppose the orthogonal basis of $W$ is $B_0=\set{v_1\dots v_k}$, and its extension to an orthogonal basis of $V$ is $B=\set{v_1\dots v_n}$. 
+    
+    Let's look at $B_1=\set{v_{k+1}\dots v_n}$. Since $\forall v\in B_1 \forall u\in B_0: v\perp u$ since $B=B_0\cup B_1$ is an orthogonal basis. This means that $\lspan(B_1)\perp\lspan(B_0)=W$. This should already be obvious, but I will prove this formally:
+    
+    Let $v\in\lspan(B_1)$, suppose $v=\displaystyle\sum_{i=k+1}^n\alpha_i v_i$. Let $u\in\lspan(B_0)$, suppose $u=\displaystyle\sum_{i=1}^k\alpha_i v_i$. So:
+    \[ \iprod{v,u} = \iprod{\sum_{i=k+1}^n\alpha_i v_i, \sum_{i=1}^k\alpha_i v_i} = \sum_{i=k+1}^n\sum_{j=1}^k\alpha_i\overline{\alpha_j}\iprod{v_i,v_j} \]
+    Since $i\neq j$ and $B$ is orthogonal, $\iprod{v_i,v_j}=0$, so:
+    \[ \iprod{v,u} = 0 \]
+    
+    So $\lspan(B_1)\subseteq W^\perp$. This means that $\dim\lspan(B_1)\leq W^\perp$, so:
+    \[ \underbrace{\dim W}_{=\lspan(B_0)} + \dim\lspan(B_1) \leq \dim W + \dim W^\perp \implies \dim V \leq \dim W + \dim W^\perp \]
+    Since $\dim(W+W^\perp) = \dim W + \dim W^\perp - \dim(W\cap W^\perp) = \dim W + \dim W^\perp$, this means that:
+    \[ \dim V = \dim(W+W^\perp) \implies V = W+W^\perp \]
+\end{itemize}
+
+So $V=W\oplus W^\perp ~~ \qed$
+
+\end{theorem}
+
+\newpage
+\subsection{Projection}
+
+Remember in our proof for \theoremcolor{\mref[the]{gramSchmidtThm}} we discussed (during my attempt to explain the intuition behind the proof) how $w_n$ is the normal from $\lspan\set{w_1\dots w_{n-1}}$ to $v_n$, and $\displaystyle\sum_{i=1}^{n-1}\dfrac{\iprod{v_n,w_i}}{\iprod{w_i,w_i}}w_i$ is the projection of $v_n$ onto $\lspan\set{w_1\dots w_{n-1}}$. We're now going to expand on this idea.
+
+\begin{definition*}
+
+Given a vector $v$ and a subspace $W$ with an orthogonal basis $E=\set{w_1\dots w_k}$, we define the \defcolor{projection} of $v$ onto $W$ as:
+\[ \proj_W(v)\coloneqq\sum_{i=1}^k\dfrac{\iprod{v,w_i}}{\iprod{w_i,w_i}}w_i \]
+
+\end{definition*}
+
+\begin{note}
+
+While I called this "the" projection onto $W$, the definition is very much relative to the choice of basis. Despite this, we will soon prove that it doesn't matter which basis we choose.
+
+\end{note}
+
+\begin{lemma*}{The following are characteristics of projection:
+\begin{enumerate}
+    \item \[ \proj_W(v)\in W \]
+    \item \[ \proj_W(v)=v \iff v\in W \]
+    \item \[ \proj_W:V\longrightarrow W \]
+    \begin{center} Is a linear transformation \end{center}
+    \item \[ \proj_W(v)\mid_W = I_W \]
+    \item \[ \forall w\in W: v-\proj_W(v) \perp w \]
+    \item \[ v\perp W\implies \proj_W(v) = 0 \]
+\end{enumerate}}
+
+Suppose $E=\set{w_1\dots w_k}$ is an orthogonal basis of $W$
+
+\begin{enumerate}
+    \item By definition:
+    \[ \proj_W(v)\in\lspan\set{w_1\dots w_n} = W \]
+    
+    \item We will prove both directions:
+    
+    $\underline{\implies}$: \begin{minipage}[t]{\dimexpr\textwidth-3cm}
+    
+    Suppose $\displaystyle\proj_W(v)=v$, since $\displaystyle\proj_W(v)\in W$ this means that $v\in W$.
+    
+    \end{minipage}
+    
+    $\underline{\impliedby}$: \begin{minipage}[t]{\dimexpr\textwidth-3cm}
+    
+    Suppose $\displaystyle v=\sum_{i=1}^k\alpha_iw_i$.
+    
+    \[ \proj_W(v) = \sum_{i=1}^k\dfrac{\iprod{v,w_i}}{\iprod{w_i,w_i}}w_i = \sum_{i=1}^k\dfrac{\iprod{\displaystyle\sum_{j=1}^k\alpha_jw_j, w_i}}{\iprod{w_i,w_i}}w_i = \sum_{i=1}^k\dfrac{\displaystyle\sum_{j=1}^k\alpha_j\iprod{w_j,w_i}}{\iprod{w_i,w_i}}w_i = \]
+    \[ = \sum_{i=1}^k\dfrac{\alpha_i\iprod{w_i,w_i}}{\iprod{w_i,w_i}}w_i = \sum_{i=1}^k\alpha_iw_i = v \]
+    
+    \end{minipage}
+    
+    \item Suppose $v,u\in V$ and $\alpha\in\bF$, so:
+    \[ \proj_W(v+\alpha u) = \sum_{i=1}^k\dfrac{\iprod{v+\alpha u, w_i}}{\iprod{w_i,w_i}}w_i = \sum_{i=1}^k\dfrac{\iprod{v,w_i} + \alpha\iprod{u, w_i}}{\iprod{w_i,w_i}}w_i = \]
+    \[ \sum_{i=1}^k\dfrac{\iprod{v,w_i}}{\iprod{w_i,w_i}}w_i + \alpha\sum_{i=1}^k\dfrac{\iprod{u,w_i}}{\iprod{w_i,w_i}}w_i = \proj_W(v)+\alpha\proj_W(u) \]
+    Which means $\displaystyle\proj_W$ is a linear transformation
+    
+    \item We've already seen that $\forall w\in W:\displaystyle\proj_W(w)=w$, so:
+    \[ \proj_W(W) = W \subseteq W \]
+    So $W$ is $\displaystyle\proj_W$ invariant. And $\displaystyle\proj_W$ doesn't change vectors in $W$, so its reduced function is just the identity on $W$
+    
+    \item Suppose $w=\displaystyle\sum_{i=1}^k\alpha_iw_i$.
+    
+    \[ \iprod{v-\proj_W(v),w} = \iprod{v,w} - \iprod{\sum_{i=1}^k\dfrac{\iprod{v,w_i}}{\iprod{w_i,w_i}}w_i,\sum_{j=1}^k\alpha_jw_j} = \iprod{v,w} - \sum_{i=1}^k\sum_{j=1}^k\overline{\alpha_j}\dfrac{\iprod{v,w_i}}{\iprod{w_i,w_i}}\iprod{w_i, w_j} \]
+    Since $E$ is orthogonal, $\iprod{w_i,w_j}=0$ when $i\neq j$, so:
+    \[ = \iprod{v,w} - \sum_{i=1}^k\overline{\alpha_i}\dfrac{\iprod{v,w_i}}{\iprod{w_i,w_i}}\iprod{w_i,w_i} = \iprod{v,w} - \sum_{i=1}^k\overline{\alpha_i}\iprod{v,w_i} = \iprod{v,w} - \iprod{v,\sum_{i=1}^k\alpha_jw_j} = \iprod{v,w} - \iprod{v,w} = 0 \]
+    Which means that $\displaystyle v-\proj_W(v)\perp w$
+    
+    \item Since $v\perp W\implies\forall i: v\perp w_i$. So:
+    \[ \proj_W(v) = \sum_{i=1}^k\dfrac{\iprod{v,w_i}}{\iprod{w_i,w_i}}w_i = \sum_{i=1}^k\dfrac{0}{\iprod{w_i,w_i}}w_i = 0 \]
+\end{enumerate}
+
+$\qed$
+
+\end{lemma*}
+
+\begin{theorem}{$\displaystyle\proj_W$ is independent of the choice for the orthogonal basis of $W$}
+
+Let $B, B'$ be two bases for $W$, and $v\in V$. I will denote $\displaystyle\proj_B$ as the projection relative to $B$ and $\displaystyle\proj_{B'}$ as the projection relative to $B'$.
+
+By the prior lemma:
+\[ v-\proj_B(v), v - \proj_{B'}(v) \perp W \implies v-\proj_B(v), v - \proj_{B'}(v) \in W^\perp \]
+
+Since:
+\[ v = \underbrace{\proj_B(v)}_{\in W} + \underbrace{v - \proj_B(v)}_{\in W^\perp} = \underbrace{\proj_{B'}(v)}_{\in W} + \underbrace{v - \proj_{B'}(v)}_{\in W^\perp} \]
+By \theoremcolor{\mref[theorem]{orthSpaceSumThm}}, $V=W\oplus W^\perp$, so $v$ has a single, unique representation as a sum of an element in $W$ and $W^\perp$. So:
+\[ v - \proj_B(v) = v - \proj_{B'}(v) \implies \proj_B(v) = \proj_{B'}(v) ~~ \qed \]
+
+\end{theorem}
+
+\end{document}
